@@ -17,7 +17,7 @@ export default function TokenModal({ title, onConfirm, onClose }: Props) {
     setLoading(true)
     setError('')
     try {
-      await onConfirm(token)
+      await onConfirm(token.trim())
       setToken('')
       onClose()
     } catch (err) {

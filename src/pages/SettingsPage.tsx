@@ -82,10 +82,10 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
   const saveGhConfig = async () => {
     if (!settings) return
     const config: GithubBackupConfig = {
-      owner: ghOwner,
-      repo: ghRepo,
-      branch: ghBranch,
-      filePath: ghPath,
+      owner: ghOwner.trim(),
+      repo: ghRepo.trim(),
+      branch: ghBranch.trim(),
+      filePath: ghPath.trim().replace(/^\/+/, ''),
     }
     const updated: UserSettings = { ...settings, githubBackup: config }
     await saveSettings(updated)
@@ -95,8 +95,14 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
   }
 
   const getGhConfig = (): GithubBackupConfig | null => {
-    if (!ghOwner || !ghRepo) return null
-    return { owner: ghOwner, repo: ghRepo, branch: ghBranch, filePath: ghPath }
+    const config: GithubBackupConfig = {
+      owner: ghOwner.trim(),
+      repo: ghRepo.trim(),
+      branch: ghBranch.trim(),
+      filePath: ghPath.trim().replace(/^\/+/, ''),
+    }
+    if (!config.owner || !config.repo) return null
+    return config
   }
 
   const handleGhAction = async (token: string) => {

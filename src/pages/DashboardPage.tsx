@@ -5,7 +5,7 @@ import {
 } from 'recharts'
 import PageLayout from '../components/PageLayout'
 import type { WorkoutSession, RunningPerformance } from '../types'
-import { isThisWeek, today, formatDate, formatPace } from '../utils/calc'
+import { getWeekStart, isThisWeek, today, formatDate, formatPace } from '../utils/calc'
 
 interface Props {
   sessions: WorkoutSession[]
@@ -35,7 +35,9 @@ export default function DashboardPage({ sessions, runningPerfs }: Props) {
   ).length
 
   const lastSession = sessions.find(s => s.status === 'done')
-  const nextSession = sessions.find(s => s.status === 'planned' && s.date >= todayStr)
+  const nextSession = sessions
+    .filter(s => s.status === 'planned' && s.date >= todayStr)
+    .sort((a, b) => a.date.localeCompare(b.date))[0]
 
   // TFL trend data (last 8 sessions with TFL data)
   const tflData = sessions
@@ -65,11 +67,7 @@ export default function DashboardPage({ sessions, runningPerfs }: Props) {
   const weeklyVolumeData = useMemo(() => {
     const weeks: Record<string, number> = {}
     for (const p of runningPerfs) {
-      const d = new Date(p.date)
-      const mon = new Date(d)
-      const day = d.getDay()
-      mon.setDate(d.getDate() - (day === 0 ? 6 : day - 1))
-      const key = mon.toISOString().split('T')[0].slice(5)
+      const key = getWeekStart(p.date).slice(5)
       weeks[key] = (weeks[key] ?? 0) + (p.distanceKm ?? 0)
     }
     return Object.entries(weeks)

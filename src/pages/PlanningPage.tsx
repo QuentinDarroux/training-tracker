@@ -5,7 +5,7 @@ import WorkoutBadge from '../components/WorkoutBadge'
 import type { WorkoutSession, UserSettings } from '../types'
 import { workouts } from '../data/workouts'
 import { defaultWeeklyPlan, dayLabels, dayOrder } from '../data/weeklyPlan'
-import { today, formatDate } from '../utils/calc'
+import { today, formatDate, parseLocalDate, toLocalDateString } from '../utils/calc'
 
 interface Props {
   sessions: WorkoutSession[]
@@ -29,7 +29,7 @@ export default function PlanningPage({ sessions, settings, onCreateSession }: Pr
   const getDayDate = (index: number): string => {
     const d = new Date(monday)
     d.setDate(monday.getDate() + index)
-    return d.toISOString().split('T')[0]
+    return toLocalDateString(d)
   }
 
   const getSessionForDay = (dateStr: string, workoutId: string): WorkoutSession | undefined => {
@@ -91,7 +91,7 @@ export default function PlanningPage({ sessions, settings, onCreateSession }: Pr
                   <div className={`text-center min-w-[48px] ${isToday ? 'text-indigo-400' : 'text-gray-400'}`}>
                     <div className="text-xs font-medium">{dayLabels[dayKey]}</div>
                     <div className="text-sm text-gray-500">
-                      {new Date(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
+                      {parseLocalDate(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
                     </div>
                   </div>
                   {workout && (

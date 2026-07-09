@@ -9,7 +9,7 @@ import type {
   StrengthSet,
 } from '../types'
 import { workouts } from '../data/workouts'
-import { calcPace, secondsToHMS, hmsToSeconds, formatPace } from '../utils/calc'
+import { calcPace, secondsToHMS, hmsToSeconds, formatPace, parseLocalDate } from '../utils/calc'
 
 interface Props {
   sessions: WorkoutSession[]
@@ -19,6 +19,8 @@ interface Props {
   onDeleteSession: (id: string) => Promise<void>
   onSaveStrengthPerf: (p: StrengthPerformance) => Promise<void>
   onSaveRunningPerf: (p: RunningPerformance) => Promise<void>
+  onDeleteStrengthPerf: (id: string) => Promise<void>
+  onDeleteRunningPerf: (id: string) => Promise<void>
 }
 
 export default function SessionPage({
@@ -29,6 +31,8 @@ export default function SessionPage({
   onDeleteSession,
   onSaveStrengthPerf,
   onSaveRunningPerf,
+  onDeleteStrengthPerf,
+  onDeleteRunningPerf,
 }: Props) {
   const { id } = useParams<{ id: string }>()
   const navigate = useNavigate()
@@ -114,6 +118,15 @@ export default function SessionPage({
     await onSaveSession(updatedSession)
     setStatus(finalStatus)
 
+    if (finalStatus !== 'done') {
+      const existingStrength = strengthPerfs.filter(p => p.sessionId === id)
+      const existingRunning = runningPerfs.filter(p => p.sessionId === id)
+      await Promise.all([
+        ...existingStrength.map(p => onDeleteStrengthPerf(p.id)),
+        ...existingRunning.map(p => onDeleteRunningPerf(p.id)),
+      ])
+    }
+
     if (workout.type === 'running' && finalStatus === 'done') {
       const durationSecs = runDuration ? hmsToSeconds(runDuration) : undefined
       const distKm = distance ? parseFloat(distance) : undefined
@@ -143,9 +156,9 @@ export default function SessionPage({
       for (const ex of workout.exercises) {
         const sets = strengthSets[ex.id]
         if (!sets) continue
+        const existingPerf = strengthPerfs.find(p => p.sessionId === id && p.exerciseId === ex.id)
         const perf: StrengthPerformance = {
-          id: strengthPerfs.find(p => p.sessionId === id && p.exerciseId === ex.id)?.id
-            ?? `sp-${id}-${ex.id}-${Date.now()}`,
+          id: existingPerf?.id ?? `sp-${id}-${ex.id}-${Date.now()}`,
           sessionId: id!,
           date: session.date,
           workoutId: session.workoutId,
@@ -153,7 +166,7 @@ export default function SessionPage({
           exerciseName: ex.name,
           sets,
           tflPain,
-          createdAt: new Date().toISOString(),
+          createdAt: existingPerf?.createdAt ?? new Date().toISOString(),
         }
         await onSaveStrengthPerf(perf)
       }
@@ -166,6 +179,10 @@ export default function SessionPage({
 
   const handleDelete = async () => {
     if (!confirm('Supprimer cette séance ?')) return
+    await Promise.all([
+      ...strengthPerfs.filter(p => p.sessionId === session.id).map(p => onDeleteStrengthPerf(p.id)),
+      ...runningPerfs.filter(p => p.sessionId === session.id).map(p => onDeleteRunningPerf(p.id)),
+    ])
     await onDeleteSession(session.id)
     navigate(-1)
   }
@@ -191,7 +208,7 @@ export default function SessionPage({
           <div className="flex items-center justify-between">
             <div>
               <div className="text-sm text-gray-400">
-                {new Date(session.date).toLocaleDateString('fr-FR', {
+                {parseLocalDate(session.date).toLocaleDateString('fr-FR', {
                   weekday: 'long', day: 'numeric', month: 'long'
                 })}
               </div>

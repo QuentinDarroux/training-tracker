@@ -14,7 +14,7 @@ export default defineConfig({
       srcDir: 'src',
       filename: 'sw.ts',
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      injectRegister: null,
       manifest: {
         name: 'Training Tracker',
         short_name: 'Training',

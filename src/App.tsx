@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { HashRouter, Routes, Route } from 'react-router-dom'
 import BottomNav from './components/BottomNav'
 import DashboardPage from './pages/DashboardPage'
 import PlanningPage from './pages/PlanningPage'
@@ -12,14 +12,12 @@ import { useData } from './hooks/useData'
 import { getStrengthSuggestions, getRunningSuggestions } from './services/progressService'
 import { useMemo } from 'react'
 
-const base = import.meta.env.BASE_URL
-
 export default function App() {
   const {
     sessions, strengthPerfs, runningPerfs, settings, goals, loading,
     saveSession, deleteSession,
-    saveStrengthPerf,
-    saveRunningPerf,
+    saveStrengthPerf, deleteStrengthPerf,
+    saveRunningPerf, deleteRunningPerf,
     updateSettings, updateGoals,
     reload,
   } = useData()
@@ -38,7 +36,7 @@ export default function App() {
   }
 
   return (
-    <BrowserRouter basename={base.endsWith('/') ? base.slice(0, -1) : base}>
+    <HashRouter>
       <Routes>
         <Route path="/" element={
           <DashboardPage sessions={sessions} runningPerfs={runningPerfs} />
@@ -66,6 +64,8 @@ export default function App() {
             onDeleteSession={deleteSession}
             onSaveStrengthPerf={saveStrengthPerf}
             onSaveRunningPerf={saveRunningPerf}
+            onDeleteStrengthPerf={deleteStrengthPerf}
+            onDeleteRunningPerf={deleteRunningPerf}
           />
         } />
         <Route path="/historique" element={
@@ -100,6 +100,6 @@ export default function App() {
         } />
       </Routes>
       <BottomNav />
-    </BrowserRouter>
+    </HashRouter>
   )
 }

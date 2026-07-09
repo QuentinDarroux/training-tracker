@@ -31,18 +31,29 @@ export function formatPace(secondsPerKm: number): string {
   return `${m}:${String(s).padStart(2, '0')}/km`
 }
 
-/** Get ISO date string for today */
+/** Format a Date as a local YYYY-MM-DD calendar date. */
+export function toLocalDateString(date: Date): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`
+}
+
+/** Parse a YYYY-MM-DD calendar date in local time, not UTC. */
+export function parseLocalDate(dateStr: string): Date {
+  const [year, month, day] = dateStr.split('-').map(Number)
+  return new Date(year, month - 1, day)
+}
+
+/** Get local date string for today */
 export function today(): string {
-  return new Date().toISOString().split('T')[0]
+  return toLocalDateString(new Date())
 }
 
 /** Get start of ISO week (Monday) for a given date string */
 export function getWeekStart(dateStr: string): string {
-  const d = new Date(dateStr)
+  const d = parseLocalDate(dateStr)
   const day = d.getDay() // 0=Sun, 1=Mon...
   const diff = (day === 0 ? -6 : 1 - day)
   d.setDate(d.getDate() + diff)
-  return d.toISOString().split('T')[0]
+  return toLocalDateString(d)
 }
 
 /** Get week start for today */
@@ -54,14 +65,14 @@ export function thisWeekStart(): string {
 export function daysFromToday(n: number): string {
   const d = new Date()
   d.setDate(d.getDate() + n)
-  return d.toISOString().split('T')[0]
+  return toLocalDateString(d)
 }
 
 /** Check if a date string is in the current week (Mon-Sun) */
 export function isThisWeek(dateStr: string): boolean {
   const weekStart = thisWeekStart()
-  const d = new Date(dateStr)
-  const ws = new Date(weekStart)
+  const d = parseLocalDate(dateStr)
+  const ws = parseLocalDate(weekStart)
   const we = new Date(ws)
   we.setDate(we.getDate() + 6)
   return d >= ws && d <= we
@@ -106,7 +117,7 @@ export function isVolumeOverload(thisWeekKm: number, lastWeekKm: number): boolea
 
 /** Format a date string to locale French display */
 export function formatDate(dateStr: string): string {
-  return new Date(dateStr).toLocaleDateString('fr-FR', {
+  return parseLocalDate(dateStr).toLocaleDateString('fr-FR', {
     weekday: 'short', day: 'numeric', month: 'short'
   })
 }
@@ -114,5 +125,5 @@ export function formatDate(dateStr: string): string {
 /** Get day of week key (monday, tuesday...) for a date */
 export function getDayKey(dateStr: string): string {
   const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday']
-  return days[new Date(dateStr).getDay()]
+  return days[parseLocalDate(dateStr).getDay()]
 }

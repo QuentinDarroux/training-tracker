@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import PageLayout from '../components/PageLayout'
 import type { UserGoal, RunningPerformance, WorkoutSession } from '../types'
-import { secondsToHMS, hmsToSeconds } from '../utils/calc'
+import { hmsToSeconds, isThisWeek, secondsToHMS } from '../utils/calc'
 
 interface Props {
   goals: UserGoal | null
@@ -44,15 +44,7 @@ export default function ObjectifsPage({ goals, sessions, runningPerfs, onSaveGoa
   const adherence = totalSessions > 0 ? Math.round((doneSessions / totalSessions) * 100) : 0
   
   const thisWeekRun = runningPerfs
-    .filter(p => {
-      const d = new Date(p.date)
-      const now = new Date()
-      const mondayDiff = now.getDay() === 0 ? 6 : now.getDay() - 1
-      const monday = new Date(now)
-      monday.setDate(now.getDate() - mondayDiff)
-      monday.setHours(0,0,0,0)
-      return d >= monday
-    })
+    .filter(p => isThisWeek(p.date))
     .reduce((sum, p) => sum + (p.distanceKm ?? 0), 0)
 
   const bestPace = runningPerfs

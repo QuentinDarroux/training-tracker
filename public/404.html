@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Training Tracker</title>
+    <script>
+      const base = '/training-tracker/'
+      const path = window.location.pathname
+      const route = path.startsWith(base) ? path.slice(base.length) : ''
+      const query = window.location.search || ''
+      const hash = window.location.hash || ''
+      window.location.replace(`${base}#/${route}${query}${hash}`)
+    </script>
+  </head>
+  <body>
+    Redirection vers Training Tracker...
+  </body>
+</html>

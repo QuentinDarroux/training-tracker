@@ -1,4 +1,5 @@
 import type { GithubBackupConfig, BackupData } from '../types'
+import { validateImportData } from './backupService'
 
 const API_BASE = 'https://api.github.com'
 
@@ -7,11 +8,26 @@ interface GithubFileResponse {
   content: string
 }
 
+function normalizeConfig(config: GithubBackupConfig): GithubBackupConfig {
+  return {
+    owner: config.owner.trim(),
+    repo: config.repo.trim(),
+    branch: config.branch.trim(),
+    filePath: config.filePath.trim().replace(/^\/+/, ''),
+  }
+}
+
+function networkErrorMessage(error: unknown): Error | null {
+  if (error instanceof TypeError) return new Error('Erreur réseau — vérifiez votre connexion.')
+  return null
+}
+
 async function getFile(
   config: GithubBackupConfig,
   token: string,
 ): Promise<GithubFileResponse | null> {
-  const url = `${API_BASE}/repos/${config.owner}/${config.repo}/contents/${config.filePath}?ref=${config.branch}`
+  const normalizedConfig = normalizeConfig(config)
+  const url = `${API_BASE}/repos/${normalizedConfig.owner}/${normalizedConfig.repo}/contents/${normalizedConfig.filePath}?ref=${normalizedConfig.branch}`
   const res = await fetch(url, {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -41,20 +57,21 @@ export async function saveToGithub(
   data: BackupData,
 ): Promise<void> {
   try {
-    const existing = await getFile(config, token)
+    const normalizedConfig = normalizeConfig(config)
+    const existing = await getFile(normalizedConfig, token)
     const json = JSON.stringify(data, null, 2)
     const content = btoa(unescape(encodeURIComponent(json)))
     const now = new Date()
-    const commitMsg = `Update training backup ${now.getFullYear()}-${String(now.getMonth()+1).padStart(2,'0')}-${String(now.getDate()).padStart(2,'0')} ${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`
+    const commitMsg = `Update training backup ${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`
 
     const body: Record<string, unknown> = {
       message: commitMsg,
       content,
-      branch: config.branch,
+      branch: normalizedConfig.branch,
     }
     if (existing) body.sha = existing.sha
 
-    const url = `${API_BASE}/repos/${config.owner}/${config.repo}/contents/${config.filePath}`
+    const url = `${API_BASE}/repos/${normalizedConfig.owner}/${normalizedConfig.repo}/contents/${normalizedConfig.filePath}`
     const res = await fetch(url, {
       method: 'PUT',
       headers: {
@@ -70,9 +87,8 @@ export async function saveToGithub(
       throw new Error(errorMessage(res.status, (msg as { message?: string }).message))
     }
   } catch (e) {
-    if (e instanceof TypeError && e.message.includes('fetch')) {
-      throw new Error('Erreur réseau — vérifiez votre connexion.')
-    }
+    const networkError = networkErrorMessage(e)
+    if (networkError) throw networkError
     throw e
   }
 }
@@ -86,14 +102,13 @@ export async function restoreFromGithub(
     if (!file) throw new Error('Aucune sauvegarde trouvée dans ce repo.')
     const json = decodeURIComponent(escape(atob(file.content.replace(/\n/g, ''))))
     const data = JSON.parse(json) as BackupData
-    if (!data.version || !Array.isArray(data.sessions)) {
+    if (!validateImportData(data)) {
       throw new Error('Le fichier distant ne semble pas être une sauvegarde Training Tracker valide.')
     }
     return data
   } catch (e) {
-    if (e instanceof TypeError && e.message.includes('fetch')) {
-      throw new Error('Erreur réseau — vérifiez votre connexion.')
-    }
+    const networkError = networkErrorMessage(e)
+    if (networkError) throw networkError
     throw e
   }
 }
@@ -102,17 +117,24 @@ export async function testConnection(
   config: GithubBackupConfig,
   token: string,
 ): Promise<string> {
-  const url = `${API_BASE}/repos/${config.owner}/${config.repo}`
-  const res = await fetch(url, {
-    headers: {
-      Authorization: `Bearer ${token}`,
-      Accept: 'application/vnd.github.v3+json',
-    },
-  })
-  if (!res.ok) {
-    const msg = await res.json().catch(() => ({ message: res.statusText }))
-    throw new Error(errorMessage(res.status, (msg as { message?: string }).message))
+  try {
+    const normalizedConfig = normalizeConfig(config)
+    const url = `${API_BASE}/repos/${normalizedConfig.owner}/${normalizedConfig.repo}`
+    const res = await fetch(url, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: 'application/vnd.github.v3+json',
+      },
+    })
+    if (!res.ok) {
+      const msg = await res.json().catch(() => ({ message: res.statusText }))
+      throw new Error(errorMessage(res.status, (msg as { message?: string }).message))
+    }
+    const info = await res.json() as { full_name: string; private: boolean }
+    return `Connecté à ${info.full_name} (${info.private ? 'privé' : 'public'})`
+  } catch (e) {
+    const networkError = networkErrorMessage(e)
+    if (networkError) throw networkError
+    throw e
   }
-  const info = await res.json() as { full_name: string; private: boolean }
-  return `Connecté à ${info.full_name} (${info.private ? 'privé' : 'public'})`
 }
