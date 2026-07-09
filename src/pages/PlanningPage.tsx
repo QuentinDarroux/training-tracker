@@ -2,9 +2,13 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import WorkoutBadge from '../components/WorkoutBadge'
-import type { Workout, WorkoutSession, UserSettings } from '../types'
-import { defaultWeeklyPlan, dayLabels, dayOrder } from '../data/weeklyPlan'
-import { today, formatDate, parseLocalDate, toLocalDateString } from '../utils/calc'
+import type { DatedPlanEntry, Workout, WorkoutSession, UserSettings } from '../types'
+import { formatDate, getWeekStart, parseLocalDate, today, toLocalDateString } from '../utils/calc'
+import {
+  getAllPlanEntries,
+  getPlanEntriesForWeek,
+  planEntryId,
+} from '../services/trainingConfigService'
 
 interface Props {
   sessions: WorkoutSession[]
@@ -13,122 +17,160 @@ interface Props {
   onCreateSession: (session: WorkoutSession) => Promise<void>
 }
 
+type PlanningTab = 'week' | 'all'
+
 export default function PlanningPage({ sessions, settings, workouts, onCreateSession }: Props) {
   const navigate = useNavigate()
-  const weeklyPlan = settings?.weeklyPlan ?? defaultWeeklyPlan
-  const [creatingDay, setCreatingDay] = useState<string | null>(null)
+  const [creatingEntryId, setCreatingEntryId] = useState<string | null>(null)
+  const [tab, setTab] = useState<PlanningTab>('week')
+  const [weekStartDate, setWeekStartDate] = useState(getWeekStart(today()))
 
-  // Get date for each day of the current week
-  const now = new Date()
-  const currentDayOfWeek = now.getDay() // 0=Sun
-  const mondayOffset = currentDayOfWeek === 0 ? -6 : 1 - currentDayOfWeek
-  const monday = new Date(now)
-  monday.setDate(now.getDate() + mondayOffset)
-  monday.setHours(0, 0, 0, 0)
+  const entries = tab === 'week'
+    ? getPlanEntriesForWeek(settings, weekStartDate)
+    : getAllPlanEntries(settings)
+  const todayStr = today()
+  const weekEndDate = (() => {
+    const end = parseLocalDate(weekStartDate)
+    end.setDate(end.getDate() + 6)
+    return toLocalDateString(end)
+  })()
 
-  const getDayDate = (index: number): string => {
-    const d = new Date(monday)
-    d.setDate(monday.getDate() + index)
-    return toLocalDateString(d)
+  const shiftWeek = (delta: number) => {
+    const start = parseLocalDate(weekStartDate)
+    start.setDate(start.getDate() + (delta * 7))
+    setWeekStartDate(toLocalDateString(start))
   }
 
-  const getSessionForDay = (dateStr: string, workoutId: string): WorkoutSession | undefined => {
-    return sessions.find(s => s.date === dateStr && s.workoutId === workoutId)
+  const getSessionForEntry = (entry: DatedPlanEntry): WorkoutSession | undefined => {
+    const entryId = planEntryId(entry)
+    return sessions.find(s =>
+      s.planEntryId === entryId
+      || (!s.planEntryId && s.date === entry.date && s.workoutId === entry.workoutId)
+    )
   }
 
-  const handleDayClick = async (dayIndex: number) => {
-    const dayKey = dayOrder[dayIndex]
-    const workoutId = weeklyPlan[dayKey]
-    const dateStr = getDayDate(dayIndex)
-    const workout = workouts.find(w => w.id === workoutId)
+  const handleEntryClick = async (entry: DatedPlanEntry) => {
+    const entryId = planEntryId(entry)
+    const workout = workouts.find(w => w.id === entry.workoutId)
     if (!workout || workout.type === 'rest') return
 
-    const existing = getSessionForDay(dateStr, workoutId)
+    const existing = getSessionForEntry(entry)
     if (existing) {
       navigate(`/seance/${existing.id}`)
       return
     }
 
-    setCreatingDay(dayKey)
+    setCreatingEntryId(entryId)
     const newSession: WorkoutSession = {
-      id: `${workoutId}-${dateStr}-${Date.now()}`,
-      date: dateStr,
-      workoutId,
+      id: `${entryId}-${Date.now()}`,
+      date: entry.date,
+      workoutId: entry.workoutId,
       workoutTitle: workout.title,
       workoutType: workout.type,
+      planEntryId: entryId,
+      planLabel: entry.label,
       status: 'planned',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
     }
     await onCreateSession(newSession)
-    setCreatingDay(null)
+    setCreatingEntryId(null)
     navigate(`/seance/${newSession.id}`)
   }
 
-  const todayStr = today()
-
   return (
-    <PageLayout title="Planning de la semaine">
-      <div className="space-y-2">
-        {dayOrder.map((dayKey, index) => {
-          const workoutId = weeklyPlan[dayKey]
-          const workout = workouts.find(w => w.id === workoutId)
-          const dateStr = getDayDate(index)
-          const isToday = dateStr === todayStr
-          const existingSession = getSessionForDay(dateStr, workoutId)
-          const status = existingSession?.status
-
-          return (
-            <div
-              key={dayKey}
-              onClick={() => workout?.type !== 'rest' && handleDayClick(index)}
-              className={`card ${
-                workout?.type !== 'rest' ? 'cursor-pointer hover:border-indigo-600 active:scale-[0.99] transition-transform' : ''
-              } ${isToday ? 'border-indigo-600 ring-1 ring-indigo-600/30' : ''}`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className={`text-center min-w-[48px] ${isToday ? 'text-indigo-400' : 'text-gray-400'}`}>
-                    <div className="text-xs font-medium">{dayLabels[dayKey]}</div>
-                    <div className="text-sm text-gray-500">
-                      {parseLocalDate(dateStr).toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' })}
-                    </div>
-                  </div>
-                  {workout && (
-                    <WorkoutBadge
-                      type={workout.type}
-                      title={workout.title}
-                      description={workout.description}
-                    />
-                  )}
-                </div>
-                <div className="flex items-center gap-2">
-                  {status && (
-                    <span className={
-                      status === 'done' ? 'badge-done' :
-                      status === 'skipped' ? 'badge-skipped' : 'badge-planned'
-                    }>
-                      {status === 'done' ? '✓ Fait' : status === 'skipped' ? 'Passé' : 'Prévu'}
-                    </span>
-                  )}
-                  {creatingDay === dayKey && <span className="text-xs text-gray-400">...</span>}
-                  {workout?.type !== 'rest' && <span className="text-gray-600">›</span>}
-                </div>
-              </div>
-              {existingSession && (
-                <div className="mt-2 pt-2 border-t border-gray-700 flex gap-3 text-xs text-gray-500">
-                  {existingSession.duration && <span>⏱ {existingSession.duration}min</span>}
-                  {existingSession.ressenti !== undefined && <span>😊 {existingSession.ressenti}/10</span>}
-                  {existingSession.tflPain !== undefined && <span>🦵 TFL: {existingSession.tflPain}/10</span>}
-                </div>
-              )}
-            </div>
-          )
-        })}
+    <PageLayout title="Planning">
+      <div className="flex gap-2 mb-4">
+        <button
+          onClick={() => setTab('week')}
+          className={`flex-1 rounded-lg px-3 py-2 text-sm ${tab === 'week' ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+        >
+          Semaine
+        </button>
+        <button
+          onClick={() => setTab('all')}
+          className={`flex-1 rounded-lg px-3 py-2 text-sm ${tab === 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300'}`}
+        >
+          Tout le programme
+        </button>
       </div>
-      <p className="text-xs text-gray-600 text-center mt-4">
-        {formatDate(getDayDate(0))} — {formatDate(getDayDate(6))}
-      </p>
+
+      {tab === 'week' && (
+        <div className="flex items-center justify-between mb-4 text-sm">
+          <button onClick={() => shiftWeek(-1)} className="btn-secondary py-1 px-3">
+            ←
+          </button>
+          <div className="text-gray-400">
+            {formatDate(weekStartDate)} — {formatDate(weekEndDate)}
+          </div>
+          <button onClick={() => shiftWeek(1)} className="btn-secondary py-1 px-3">
+            →
+          </button>
+        </div>
+      )}
+
+      {entries.length === 0 ? (
+        <div className="card text-center py-8 text-gray-500">
+          Aucun entraînement planifié.
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {entries.map(entry => {
+            const entryId = planEntryId(entry)
+            const workout = workouts.find(w => w.id === entry.workoutId)
+            const isToday = entry.date === todayStr
+            const existingSession = getSessionForEntry(entry)
+            const status = existingSession?.status
+
+            return (
+              <div
+                key={entryId}
+                onClick={() => workout?.type !== 'rest' && handleEntryClick(entry)}
+                className={`card ${
+                  workout?.type !== 'rest' ? 'cursor-pointer hover:border-indigo-600 active:scale-[0.99] transition-transform' : ''
+                } ${isToday ? 'border-indigo-600 ring-1 ring-indigo-600/30' : ''}`}
+              >
+                <div className="flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className={`text-center min-w-[76px] ${isToday ? 'text-indigo-400' : 'text-gray-400'}`}>
+                      <div className="text-xs font-medium">{formatDate(entry.date)}</div>
+                      <div className="text-sm text-gray-500">{entry.label}</div>
+                    </div>
+                    {workout ? (
+                      <WorkoutBadge
+                        type={workout.type}
+                        title={workout.title}
+                        description={workout.description}
+                      />
+                    ) : (
+                      <div className="text-sm text-red-300">Workout introuvable: {entry.workoutId}</div>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 shrink-0">
+                    {status && (
+                      <span className={
+                        status === 'done' ? 'badge-done' :
+                        status === 'skipped' ? 'badge-skipped' : 'badge-planned'
+                      }>
+                        {status === 'done' ? '✓ Fait' : status === 'skipped' ? 'Passé' : 'Prévu'}
+                      </span>
+                    )}
+                    {creatingEntryId === entryId && <span className="text-xs text-gray-400">...</span>}
+                    {workout?.type !== 'rest' && <span className="text-gray-600">›</span>}
+                  </div>
+                </div>
+                {existingSession && (
+                  <div className="mt-2 pt-2 border-t border-gray-700 flex gap-3 text-xs text-gray-500">
+                    {existingSession.duration && <span>⏱ {existingSession.duration}min</span>}
+                    {existingSession.ressenti !== undefined && <span>😊 {existingSession.ressenti}/10</span>}
+                    {existingSession.tflPain !== undefined && <span>🦵 TFL: {existingSession.tflPain}/10</span>}
+                  </div>
+                )}
+              </div>
+            )
+          })}
+        </div>
+      )}
     </PageLayout>
   )
 }

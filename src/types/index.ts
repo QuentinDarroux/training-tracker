@@ -29,12 +29,28 @@ export interface WeeklyPlan {
   sunday: string
 }
 
+export interface DatedPlanEntry {
+  id?: string
+  date: string // YYYY-MM-DD
+  label: string
+  workoutId: string
+}
+
+export interface DatedTrainingPlan {
+  type: 'dated'
+  entries: DatedPlanEntry[]
+}
+
+export type TrainingPlan = DatedTrainingPlan
+
 export interface WorkoutSession {
   id: string
   date: string // ISO date string YYYY-MM-DD
   workoutId: string
   workoutTitle: string
   workoutType: WorkoutType
+  planEntryId?: string
+  planLabel?: string
   status: 'planned' | 'done' | 'skipped'
   ressenti?: number // 1-10
   fatigue?: number // 1-10
@@ -102,6 +118,7 @@ export interface UserGoal {
 export interface UserSettings {
   theme: 'dark' | 'light'
   weeklyPlan: WeeklyPlan
+  plan?: TrainingPlan
   workouts?: Workout[]
   lastLocalBackup?: string
   githubBackup?: GithubBackupConfig
@@ -119,7 +136,8 @@ export interface GithubBackupConfig {
 export interface TrainingConfig {
   version: string
   exportedAt: string
-  weeklyPlan: WeeklyPlan
+  weeklyPlan?: WeeklyPlan
+  plan?: TrainingPlan
   workouts: Workout[]
 }
 

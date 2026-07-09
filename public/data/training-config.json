@@ -1,0 +1,79 @@
+{
+  "version": "1.0.0",
+  "exportedAt": "2026-07-09T16:05:00.000Z",
+  "plan": {
+    "type": "dated",
+    "entries": [
+      { "date": "2026-07-10", "label": "J1 matin", "workoutId": "renfo_a" },
+      { "date": "2026-07-11", "label": "J2 endurance", "workoutId": "footing_ef" },
+      { "date": "2026-07-12", "label": "J3 sortie longue", "workoutId": "sortie_longue" },
+      { "date": "2026-07-13", "label": "J4 repos", "workoutId": "repos" },
+      { "date": "2026-07-14", "label": "J5 qualité", "workoutId": "seance_qualite" },
+      { "date": "2026-07-15", "label": "J6 renfo", "workoutId": "renfo_b" },
+      { "date": "2026-07-16", "label": "J7 repos", "workoutId": "repos" },
+      { "date": "2026-07-17", "label": "J8 footing", "workoutId": "footing_ef" },
+      { "date": "2026-07-18", "label": "J9 matin", "workoutId": "renfo_a" },
+      { "date": "2026-07-18", "label": "J9 après-midi", "workoutId": "footing_ef" },
+      { "date": "2026-07-19", "label": "J10 sortie longue", "workoutId": "sortie_longue" },
+      { "date": "2026-07-20", "label": "J11 repos", "workoutId": "repos" },
+      { "date": "2026-07-21", "label": "J12 qualité", "workoutId": "seance_qualite" },
+      { "date": "2026-07-22", "label": "J13 renfo", "workoutId": "renfo_b" },
+      { "date": "2026-07-23", "label": "J14 footing", "workoutId": "footing_ef" }
+    ]
+  },
+  "workouts": [
+    {
+      "id": "renfo_a",
+      "title": "Renforcement A",
+      "type": "strength",
+      "description": "Jambes + core + prévention TFL",
+      "exercises": [
+        { "id": "squat", "name": "Squats", "sets": 3, "reps": 12, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "both" },
+        { "id": "fentes", "name": "Fentes", "sets": 3, "reps": 10, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "unilateral" },
+        { "id": "hip_thrust", "name": "Hip Thrust", "sets": 3, "reps": 12, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "both" },
+        { "id": "planche", "name": "Planche", "sets": 3, "reps": 30, "unit": "seconds", "trackWeight": false, "trackDuration": true, "side": "both" }
+      ]
+    },
+    {
+      "id": "renfo_b",
+      "title": "Renforcement B",
+      "type": "strength",
+      "description": "Jambes + fessiers + stabilité hanche",
+      "exercises": [
+        { "id": "step_up", "name": "Step Up", "sets": 3, "reps": 10, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "unilateral" },
+        { "id": "sdj_tendues", "name": "Soulevé de terre jambes tendues", "sets": 3, "reps": 12, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "both" },
+        { "id": "pont_1jambe", "name": "Pont fessier une jambe", "sets": 3, "reps": 15, "unit": "reps", "trackWeight": false, "trackDuration": false, "side": "unilateral" },
+        { "id": "clamshell", "name": "Clamshell", "sets": 3, "reps": 15, "unit": "reps", "trackWeight": false, "trackDuration": false, "side": "unilateral" },
+        { "id": "bird_dog", "name": "Bird Dog", "sets": 3, "reps": 15, "unit": "reps", "trackWeight": false, "trackDuration": false, "side": "both" }
+      ]
+    },
+    {
+      "id": "footing_ef",
+      "title": "Footing EF",
+      "type": "running",
+      "description": "Endurance fondamentale — allure facile, FC contrôlée, discussion possible.",
+      "exercises": []
+    },
+    {
+      "id": "seance_qualite",
+      "title": "Séance qualité",
+      "type": "running",
+      "description": "Fractionné/tempo contrôlé pour travailler l'allure.",
+      "exercises": []
+    },
+    {
+      "id": "sortie_longue",
+      "title": "Sortie longue",
+      "type": "running",
+      "description": "Construire l'endurance progressivement en zone facile.",
+      "exercises": []
+    },
+    {
+      "id": "repos",
+      "title": "Repos",
+      "type": "rest",
+      "description": "Journée de récupération.",
+      "exercises": []
+    }
+  ]
+}

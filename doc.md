@@ -22,7 +22,7 @@ The app expects a JSON object with:
 
 - `version`: string
 - `exportedAt`: ISO datetime string
-- `weeklyPlan`: object mapping each day to a workout id
+- either `plan` for a flexible dated program, or legacy `weeklyPlan`
 - `workouts`: array of workout definitions
 
 ## Required schema
@@ -31,14 +31,12 @@ The app expects a JSON object with:
 {
   "version": "1.0.0",
   "exportedAt": "2026-07-09T15:45:00.000Z",
-  "weeklyPlan": {
-    "monday": "renfo_a",
-    "tuesday": "footing_ef",
-    "wednesday": "repos",
-    "thursday": "seance_qualite",
-    "friday": "renfo_b",
-    "saturday": "repos",
-    "sunday": "sortie_longue"
+  "plan": {
+    "type": "dated",
+    "entries": [
+      { "date": "2026-07-10", "label": "Matin", "workoutId": "renfo_a" },
+      { "date": "2026-07-10", "label": "Après-midi", "workoutId": "footing_ef" }
+    ]
   },
   "workouts": []
 }
@@ -48,8 +46,8 @@ The app expects a JSON object with:
 
 An agent generating this file must follow these rules:
 
-1. `weeklyPlan` must contain exactly these day keys: `monday`, `tuesday`, `wednesday`, `thursday`, `friday`, `saturday`, `sunday`.
-2. Every value in `weeklyPlan` must match an existing `workouts[].id`.
+1. Prefer `plan.type = "dated"` for user-authored programs.
+2. Every `plan.entries[].workoutId` must match an existing `workouts[].id`.
 3. Every workout `id` must be unique and stable. Use lowercase snake_case, for example `renfo_a`, `footing_ef`, `sortie_longue`.
 4. `workout.type` must be one of: `strength`, `running`, `rest`.
 5. `rest` and `running` workouts should use `"exercises": []`.
@@ -58,6 +56,57 @@ An agent generating this file must follow these rules:
 8. Exercise `unit` must be either `reps` or `seconds`.
 9. Exercise `side` must be one of: `both`, `left`, `right`, `unilateral`.
 10. Use numbers for `sets` and `reps`, not strings.
+
+## Dated plan format
+
+Use this format when the user wants a program over arbitrary dates, a 10-day plan, or multiple sessions on the same day:
+
+```json
+"plan": {
+  "type": "dated",
+  "entries": [
+    {
+      "date": "2026-07-10",
+      "label": "Matin",
+      "workoutId": "renfo_a"
+    },
+    {
+      "date": "2026-07-10",
+      "label": "Après-midi",
+      "workoutId": "footing_ef"
+    },
+    {
+      "date": "2026-07-11",
+      "label": "J2",
+      "workoutId": "repos"
+    }
+  ]
+}
+```
+
+Notes:
+
+- `date` must be `YYYY-MM-DD`.
+- `label` is displayed in Planning and Aujourd'hui. Examples: `Matin`, `Après-midi`, `J1`, `Séance 2`.
+- Multiple entries can use the same `date`.
+- Entries are shown week-by-week in Planning, with an additional "Tout le programme" tab.
+- Optional `id` can be provided for stable session matching. If omitted, the app derives one from `date + label + workoutId`.
+
+## Legacy weekly plan format
+
+The old weekly format is still accepted for backward compatibility:
+
+```json
+"weeklyPlan": {
+  "monday": "renfo_a",
+  "tuesday": "footing_ef",
+  "wednesday": "repos",
+  "thursday": "seance_qualite",
+  "friday": "renfo_b",
+  "saturday": "repos",
+  "sunday": "sortie_longue"
+}
+```
 
 ## Workout object
 
@@ -134,14 +183,14 @@ An agent generating this file must follow these rules:
 {
   "version": "1.0.0",
   "exportedAt": "2026-07-09T15:45:00.000Z",
-  "weeklyPlan": {
-    "monday": "renfo_a",
-    "tuesday": "footing_ef",
-    "wednesday": "repos",
-    "thursday": "seance_qualite",
-    "friday": "renfo_b",
-    "saturday": "repos",
-    "sunday": "sortie_longue"
+  "plan": {
+    "type": "dated",
+    "entries": [
+      { "date": "2026-07-10", "label": "Matin", "workoutId": "renfo_a" },
+      { "date": "2026-07-10", "label": "Après-midi", "workoutId": "footing_ef" },
+      { "date": "2026-07-11", "label": "J2", "workoutId": "repos" },
+      { "date": "2026-07-12", "label": "Sortie longue", "workoutId": "sortie_longue" }
+    ]
   },
   "workouts": [
     {
@@ -227,7 +276,7 @@ An agent generating this file must follow these rules:
 Before writing or pushing `data/training-config.json`, verify:
 
 1. The JSON parses with `JSON.parse`.
-2. All seven days exist in `weeklyPlan`.
+2. If `plan.type` is `dated`, every entry has `date`, `label`, and `workoutId`.
 3. Every planned workout id exists in `workouts`.
 4. No duplicate workout ids.
 5. Strength exercises use valid `unit` and `side` values.
