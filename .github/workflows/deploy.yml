@@ -33,11 +33,29 @@ jobs:
         # inherit an organization-level npm registry override (pointing
         # at an internal corporate Artifactory mirror), which isn't
         # reachable from GitHub-hosted runners and causes every package
-        # fetch to fail with ENOTFOUND (surfacing as npm's misleading
-        # "Exit handler never called!" error). This is a public repo
-        # depending only on public npm packages, so pin the registry
-        # explicitly regardless of any inherited config.
-        run: npm ci
+        # fetch to fail with ENOTFOUND. This is a public repo depending
+        # only on public npm packages, so pin the registry explicitly
+        # regardless of any inherited config.
+        #
+        # Separately, this runner's npm can hit a real npm bug
+        # (npm/cli#4028, "Exit handler never called!") where npm ci
+        # crashes mid-install but still exits 0, leaving an incomplete
+        # node_modules. Retry a few times and verify with require.resolve
+        # (not npm's exit code) before moving on.
+        run: |
+          ok=false
+          for attempt in 1 2 3; do
+            echo "Install attempt $attempt"
+            rm -rf node_modules
+            npm ci --no-audit --no-fund && node -e "
+              for (const m of ['react','vite','typescript']) require.resolve(m + '/package.json');
+            " && ok=true && break
+            echo "Attempt $attempt failed, retrying..."
+          done
+          if [ "$ok" != "true" ]; then
+            echo "::error::Failed to install a complete node_modules after 3 attempts"
+            exit 1
+          fi
         env:
           npm_config_registry: https://registry.npmjs.org/
 
