@@ -3,8 +3,19 @@ import PageLayout from '../components/PageLayout'
 import TokenModal from '../components/TokenModal'
 import type { UserSettings, GithubBackupConfig } from '../types'
 import { exportData, downloadJson, validateImportData, importData } from '../services/backupService'
-import { saveToGithub, restoreFromGithub, testConnection } from '../services/githubBackupService'
+import {
+  restoreConfigFromGithub,
+  saveConfigToGithub,
+  saveToGithub,
+  restoreFromGithub,
+  testConnection,
+} from '../services/githubBackupService'
 import { resetAllData, saveSettings } from '../services/storageService'
+import {
+  applyTrainingConfig,
+  exportTrainingConfig,
+  validateTrainingConfig,
+} from '../services/trainingConfigService'
 
 interface Props {
   settings: UserSettings | null
@@ -12,7 +23,7 @@ interface Props {
   onUpdateSettings: (s: UserSettings) => Promise<void>
 }
 
-type ModalAction = 'save' | 'restore' | 'test' | null
+type ModalAction = 'save' | 'restore' | 'test' | 'push-config' | 'pull-config' | null
 
 export default function SettingsPage({ settings, onReload, onUpdateSettings }: Props) {
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
@@ -25,7 +36,12 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
   const [ghRepo, setGhRepo] = useState(ghConfig?.repo ?? '')
   const [ghBranch, setGhBranch] = useState(ghConfig?.branch ?? 'main')
   const [ghPath, setGhPath] = useState(ghConfig?.filePath ?? 'data/training-backup.json')
+  const [ghConfigPath, setGhConfigPath] = useState(ghConfig?.configFilePath ?? 'public/data/training-config.json')
   const [showGhConfig, setShowGhConfig] = useState(false)
+  const [showTrainingConfig, setShowTrainingConfig] = useState(false)
+  const [trainingConfigText, setTrainingConfigText] = useState(() =>
+    JSON.stringify(exportTrainingConfig(settings), null, 2)
+  )
 
   const showMsg = (text: string, type: 'success' | 'error' = 'success') => {
     setMessage({ text, type })
@@ -86,6 +102,7 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
       repo: ghRepo.trim(),
       branch: ghBranch.trim(),
       filePath: ghPath.trim().replace(/^\/+/, ''),
+      configFilePath: ghConfigPath.trim().replace(/^\/+/, ''),
     }
     const updated: UserSettings = { ...settings, githubBackup: config }
     await saveSettings(updated)
@@ -100,6 +117,7 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
       repo: ghRepo.trim(),
       branch: ghBranch.trim(),
       filePath: ghPath.trim().replace(/^\/+/, ''),
+      configFilePath: ghConfigPath.trim().replace(/^\/+/, ''),
     }
     if (!config.owner || !config.repo) return null
     return config
@@ -129,8 +147,43 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
       await importData(data)
       await onReload()
       showMsg('Restauration GitHub réussie !')
+    } else if (modalAction === 'push-config') {
+      const parsed = JSON.parse(trainingConfigText) as unknown
+      if (!validateTrainingConfig(parsed)) throw new Error('Configuration entraînements invalide.')
+      await saveConfigToGithub(config, token, parsed)
+      alert('Configuration poussée dans GitHub. Attends la fin du rebuild/déploiement GitHub Actions, puis recharge l’app. La date de build au-dessus de la barre du bas doit changer.')
+      showMsg('Configuration poussée vers GitHub. Attendez le rebuild avant de recharger.')
+    } else if (modalAction === 'pull-config') {
+      if (!settings) throw new Error('Réglages indisponibles.')
+      const remoteConfig = await restoreConfigFromGithub(config, token)
+      const updated = applyTrainingConfig(settings, remoteConfig)
+      await onUpdateSettings(updated)
+      setTrainingConfigText(JSON.stringify(remoteConfig, null, 2))
+      await onReload()
+      showMsg('Configuration entraînements restaurée depuis GitHub.')
     }
     setModalAction(null)
+  }
+
+  const refreshTrainingConfigText = () => {
+    setTrainingConfigText(JSON.stringify(exportTrainingConfig(settings), null, 2))
+  }
+
+  const applyTrainingConfigText = async () => {
+    if (!settings) return
+    try {
+      const parsed = JSON.parse(trainingConfigText) as unknown
+      if (!validateTrainingConfig(parsed)) {
+        showMsg('Configuration entraînements invalide', 'error')
+        return
+      }
+      const updated = applyTrainingConfig(settings, parsed)
+      await onUpdateSettings(updated)
+      await onReload()
+      showMsg('Configuration appliquée localement.')
+    } catch {
+      showMsg('JSON invalide dans la configuration entraînements', 'error')
+    }
   }
 
   return (
@@ -193,10 +246,15 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
                     className="input-field" placeholder="main" />
                 </div>
                 <div>
-                  <label className="label">Chemin du fichier</label>
+                  <label className="label">Chemin backup données</label>
                   <input value={ghPath} onChange={e => setGhPath(e.target.value)}
                     className="input-field" placeholder="data/backup.json" />
                 </div>
+              </div>
+              <div>
+                <label className="label">Chemin config entraînements</label>
+                <input value={ghConfigPath} onChange={e => setGhConfigPath(e.target.value)}
+                  className="input-field" placeholder="data/training-config.json" />
               </div>
               <button onClick={saveGhConfig} className="btn-secondary w-full text-sm">
                 💾 Sauvegarder la config
@@ -232,6 +290,60 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
           )}
         </div>
 
+        {/* Training config */}
+        <div className="card space-y-3">
+          <div className="flex items-center justify-between">
+            <h3 className="font-medium text-gray-300">Config entraînements</h3>
+            <button
+              onClick={() => {
+                if (!showTrainingConfig) refreshTrainingConfigText()
+                setShowTrainingConfig(!showTrainingConfig)
+              }}
+              className="text-xs text-indigo-400"
+            >
+              {showTrainingConfig ? '▲ Fermer' : '⚙️ JSON'}
+            </button>
+          </div>
+
+          <p className="text-xs text-gray-500">
+            Modifie le planning + les entraînements via JSON, puis pousse <code>{ghConfigPath}</code> dans GitHub.
+            Après push, attends le rebuild GitHub Actions avant de recharger l’app.
+          </p>
+
+          {showTrainingConfig && (
+            <div className="space-y-2">
+              <textarea
+                value={trainingConfigText}
+                onChange={e => setTrainingConfigText(e.target.value)}
+                className="input-field font-mono text-xs min-h-[260px]"
+                spellCheck={false}
+              />
+              <div className="grid grid-cols-2 gap-2">
+                <button onClick={refreshTrainingConfigText} className="btn-secondary text-sm">
+                  ↻ Recharger local
+                </button>
+                <button onClick={applyTrainingConfigText} className="btn-secondary text-sm">
+                  ✅ Appliquer local
+                </button>
+              </div>
+              <button
+                onClick={() => setModalAction('push-config')}
+                disabled={!ghOwner || !ghRepo}
+                className="btn-primary w-full disabled:opacity-50"
+              >
+                🚀 Pousser training-config.json
+              </button>
+              <button
+                onClick={() => setModalAction('pull-config')}
+                disabled={!ghOwner || !ghRepo}
+                className="btn-secondary w-full disabled:opacity-50"
+              >
+                📥 Restaurer training-config.json
+              </button>
+            </div>
+          )}
+        </div>
+
         {/* Reset */}
         <div className="card">
           <h3 className="font-medium text-gray-300 mb-3">Données</h3>
@@ -257,6 +369,8 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
           title={
             modalAction === 'save' ? '☁️ Sauvegarder vers GitHub' :
             modalAction === 'restore' ? '🔄 Restaurer depuis GitHub' :
+            modalAction === 'push-config' ? '🚀 Pousser training-config.json' :
+            modalAction === 'pull-config' ? '📥 Restaurer training-config.json' :
             '🔍 Tester la connexion'
           }
           onConfirm={handleGhAction}

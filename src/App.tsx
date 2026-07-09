@@ -10,6 +10,7 @@ import ObjectifsPage from './pages/ObjectifsPage'
 import SettingsPage from './pages/SettingsPage'
 import { useData } from './hooks/useData'
 import { getStrengthSuggestions, getRunningSuggestions } from './services/progressService'
+import { getActiveWorkouts } from './services/trainingConfigService'
 import { useMemo } from 'react'
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
     ...getStrengthSuggestions(strengthPerfs, sessions),
     ...getRunningSuggestions(runningPerfs, sessions),
   ], [strengthPerfs, runningPerfs, sessions])
+  const workoutCatalog = useMemo(() => getActiveWorkouts(settings), [settings])
 
   if (loading) {
     return (
@@ -45,6 +47,7 @@ export default function App() {
           <PlanningPage
             sessions={sessions}
             settings={settings}
+            workouts={workoutCatalog}
             onCreateSession={saveSession}
           />
         } />
@@ -52,6 +55,7 @@ export default function App() {
           <TodayPage
             sessions={sessions}
             settings={settings}
+            workouts={workoutCatalog}
             onCreateSession={saveSession}
           />
         } />
@@ -60,6 +64,7 @@ export default function App() {
             sessions={sessions}
             strengthPerfs={strengthPerfs}
             runningPerfs={runningPerfs}
+            workouts={workoutCatalog}
             onSaveSession={saveSession}
             onDeleteSession={deleteSession}
             onSaveStrengthPerf={saveStrengthPerf}
@@ -80,6 +85,7 @@ export default function App() {
           <ExercicesPage
             strengthPerfs={strengthPerfs}
             sessions={sessions}
+            workouts={workoutCatalog}
             suggestions={suggestions}
           />
         } />

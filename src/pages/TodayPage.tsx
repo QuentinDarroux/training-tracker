@@ -1,18 +1,18 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
-import type { WorkoutSession, UserSettings } from '../types'
-import { workouts } from '../data/workouts'
+import type { Workout, WorkoutSession, UserSettings } from '../types'
 import { defaultWeeklyPlan } from '../data/weeklyPlan'
 import { today, getDayKey } from '../utils/calc'
 
 interface Props {
   sessions: WorkoutSession[]
   settings: UserSettings | null
+  workouts: Workout[]
   onCreateSession: (session: WorkoutSession) => Promise<void>
 }
 
-export default function TodayPage({ sessions, settings, onCreateSession }: Props) {
+export default function TodayPage({ sessions, settings, workouts, onCreateSession }: Props) {
   const navigate = useNavigate()
   const weeklyPlan = settings?.weeklyPlan ?? defaultWeeklyPlan
   const todayStr = today()

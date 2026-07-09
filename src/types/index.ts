@@ -102,6 +102,7 @@ export interface UserGoal {
 export interface UserSettings {
   theme: 'dark' | 'light'
   weeklyPlan: WeeklyPlan
+  workouts?: Workout[]
   lastLocalBackup?: string
   githubBackup?: GithubBackupConfig
 }
@@ -111,7 +112,15 @@ export interface GithubBackupConfig {
   repo: string
   branch: string
   filePath: string
+  configFilePath?: string
   // token is NEVER stored here
+}
+
+export interface TrainingConfig {
+  version: string
+  exportedAt: string
+  weeklyPlan: WeeklyPlan
+  workouts: Workout[]
 }
 
 export interface BackupData {

@@ -7,6 +7,9 @@ const BASE_PATH = '/training-tracker/'
 
 export default defineConfig({
   base: BASE_PATH,
+  define: {
+    __BUILD_TIME__: JSON.stringify(new Date().toISOString()),
+  },
   plugins: [
     react(),
     VitePWA({

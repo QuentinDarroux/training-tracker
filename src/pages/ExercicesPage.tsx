@@ -1,16 +1,16 @@
 import { useState } from 'react'
 import PageLayout from '../components/PageLayout'
-import type { StrengthPerformance, WorkoutSession, ProgressSuggestion } from '../types'
-import { workouts } from '../data/workouts'
+import type { StrengthPerformance, WorkoutSession, ProgressSuggestion, Workout } from '../types'
 import { formatDate } from '../utils/calc'
 
 interface Props {
   strengthPerfs: StrengthPerformance[]
   sessions: WorkoutSession[]
+  workouts: Workout[]
   suggestions: ProgressSuggestion[]
 }
 
-export default function ExercicesPage({ strengthPerfs, suggestions }: Props) {
+export default function ExercicesPage({ strengthPerfs, workouts, suggestions }: Props) {
   const [selected, setSelected] = useState<string | null>(null)
 
   // Get all strength exercises

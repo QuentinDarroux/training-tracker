@@ -2,18 +2,18 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import WorkoutBadge from '../components/WorkoutBadge'
-import type { WorkoutSession, UserSettings } from '../types'
-import { workouts } from '../data/workouts'
+import type { Workout, WorkoutSession, UserSettings } from '../types'
 import { defaultWeeklyPlan, dayLabels, dayOrder } from '../data/weeklyPlan'
 import { today, formatDate, parseLocalDate, toLocalDateString } from '../utils/calc'
 
 interface Props {
   sessions: WorkoutSession[]
   settings: UserSettings | null
+  workouts: Workout[]
   onCreateSession: (session: WorkoutSession) => Promise<void>
 }
 
-export default function PlanningPage({ sessions, settings, onCreateSession }: Props) {
+export default function PlanningPage({ sessions, settings, workouts, onCreateSession }: Props) {
   const navigate = useNavigate()
   const weeklyPlan = settings?.weeklyPlan ?? defaultWeeklyPlan
   const [creatingDay, setCreatingDay] = useState<string | null>(null)

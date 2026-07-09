@@ -21,6 +21,7 @@ import {
   deleteStrengthPerf as delStrPerf,
   deleteRunningPerf as delRunPerf,
 } from '../services/storageService'
+import { applyTrainingConfig, fetchDeployedTrainingConfig } from '../services/trainingConfigService'
 
 export function useData() {
   const [sessions, setSessions] = useState<WorkoutSession[]>([])
@@ -31,13 +32,25 @@ export function useData() {
   const [loading, setLoading] = useState(true)
 
   const loadAll = useCallback(async () => {
-    const [sess, sp, rp, setts, g] = await Promise.all([
+    const [sess, sp, rp, storedSettings, g] = await Promise.all([
       getAllSessions(),
       getAllStrengthPerfs(),
       getAllRunningPerfs(),
       getSettings(),
       getGoals(),
     ])
+    let setts = storedSettings
+    try {
+      const deployedConfig = await fetchDeployedTrainingConfig()
+      if (deployedConfig) {
+        setts = applyTrainingConfig(storedSettings, deployedConfig)
+        if (JSON.stringify(setts) !== JSON.stringify(storedSettings)) {
+          await saveSetts(setts)
+        }
+      }
+    } catch (error) {
+      console.warn(error)
+    }
     setSessions(sess.sort((a, b) => b.date.localeCompare(a.date)))
     setStrengthPerfs(sp.sort((a, b) => b.date.localeCompare(a.date)))
     setRunningPerfs(rp.sort((a, b) => b.date.localeCompare(a.date)))

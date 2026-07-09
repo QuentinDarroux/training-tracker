@@ -7,14 +7,15 @@ import type {
   StrengthPerformance,
   RunningPerformance,
   StrengthSet,
+  Workout,
 } from '../types'
-import { workouts } from '../data/workouts'
 import { calcPace, secondsToHMS, hmsToSeconds, formatPace, parseLocalDate } from '../utils/calc'
 
 interface Props {
   sessions: WorkoutSession[]
   strengthPerfs: StrengthPerformance[]
   runningPerfs: RunningPerformance[]
+  workouts: Workout[]
   onSaveSession: (s: WorkoutSession) => Promise<void>
   onDeleteSession: (id: string) => Promise<void>
   onSaveStrengthPerf: (p: StrengthPerformance) => Promise<void>
@@ -27,6 +28,7 @@ export default function SessionPage({
   sessions,
   strengthPerfs,
   runningPerfs,
+  workouts,
   onSaveSession,
   onDeleteSession,
   onSaveStrengthPerf,
