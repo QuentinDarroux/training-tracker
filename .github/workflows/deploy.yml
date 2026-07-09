@@ -26,58 +26,20 @@ jobs:
         with:
           node-version: '20'
           cache: 'npm'
+          registry-url: 'https://registry.npmjs.org'
 
       - name: Install dependencies
-        # Works around a real npm bug (npm/cli#4028, "Exit handler never
-        # called!") seen on this runner's npm 10.8.2: npm ci can crash
-        # mid-install while still exiting 0. The crash can leave package
-        # *folders* present but with truncated/missing files inside
-        # (e.g. missing package.json for @types/react), so a plain
-        # directory-existence check is not enough — verify with Node's
-        # own require.resolve() against each package's package.json,
-        # and prefer `npm install` over `npm ci` since the community
-        # reports the ci-specific pruning step triggers this race more.
-        run: |
-          set +e
-          success=0
-          for attempt in 1 2 3; do
-            echo "Install attempt $attempt"
-            rm -rf node_modules
-            npm install --no-audit --no-fund
-            node -e "
-              const mods = ['react','react-dom','react-router-dom','vite','typescript',
-                '@types/react','@types/react-dom','vite-plugin-pwa','idb','recharts',
-                'workbox-core','workbox-precaching','@vitejs/plugin-react'];
-              let ok = true;
-              for (const m of mods) {
-                try { require.resolve(m + '/package.json'); }
-                catch (e) { console.error('MISSING:', m); ok = false; }
-              }
-              process.exit(ok ? 0 : 1);
-            "
-            if [ $? -eq 0 ]; then
-              echo "Dependencies verified present."
-              success=1
-              break
-            fi
-            echo "Dependencies missing/incomplete after attempt $attempt, retrying..."
-          done
-          set -e
-          if [ "$success" != "1" ]; then
-            echo "::group::npm debug logs (diagnostic)"
-            for f in /home/runner/.npm/_logs/*.log; do
-              echo "=== $f ==="
-              cat "$f" || true
-            done
-            echo "::endgroup::"
-            echo "::group::node_modules state"
-            echo "node_modules dir count: $(ls node_modules 2>/dev/null | wc -l)"
-            df -h .
-            free -h
-            echo "::endgroup::"
-            echo "::error::Failed to install a complete node_modules after 3 attempts"
-            exit 1
-          fi
+        # Force the public npm registry: this GitHub Actions runner can
+        # inherit an organization-level npm registry override (pointing
+        # at an internal corporate Artifactory mirror), which isn't
+        # reachable from GitHub-hosted runners and causes every package
+        # fetch to fail with ENOTFOUND (surfacing as npm's misleading
+        # "Exit handler never called!" error). This is a public repo
+        # depending only on public npm packages, so pin the registry
+        # explicitly regardless of any inherited config.
+        run: npm ci
+        env:
+          npm_config_registry: https://registry.npmjs.org/
 
       - name: Build
         run: npm run build
