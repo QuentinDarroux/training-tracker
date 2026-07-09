@@ -28,7 +28,14 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        run: npm ci
+        # Pin a known-good npm release: some npm versions bundled with
+        # recent runner images intermittently crash during `npm ci` with
+        # "Exit handler never called!" (npm/cli#4028), which truncates
+        # node_modules while still reporting success. Pin + retry to
+        # guard against it.
+        run: |
+          npm install -g npm@10.8.2
+          npm ci || npm ci
 
       - name: Build
         run: npm run build
