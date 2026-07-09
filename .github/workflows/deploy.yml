@@ -25,51 +25,10 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: '20'
-          registry-url: 'https://registry.npmjs.org'
-          # No npm cache here: earlier failed runs populated GitHub's
-          # actions/setup-node npm cache while pointed at the wrong
-          # (unreachable) corporate registry. Since the cache key is
-          # only based on the lockfile hash (unchanged across those
-          # runs), a stale/corrupt cache entry could keep being
-          # restored. Skip caching until a clean run is confirmed.
+          cache: 'npm'
 
       - name: Install dependencies
-        # Force the public npm registry: this GitHub Actions runner can
-        # inherit an organization-level npm registry override (pointing
-        # at an internal corporate Artifactory mirror), which isn't
-        # reachable from GitHub-hosted runners and causes every package
-        # fetch to fail with ENOTFOUND. This is a public repo depending
-        # only on public npm packages, so pin the registry explicitly
-        # regardless of any inherited config.
-        #
-        # Separately, this runner's npm can hit a real npm bug
-        # (npm/cli#4028, "Exit handler never called!") where npm ci
-        # crashes mid-install but still exits 0, leaving an incomplete
-        # node_modules. Retry a few times and verify with require.resolve
-        # (not npm's exit code) before moving on.
-        run: |
-          ok=false
-          for attempt in 1 2 3; do
-            echo "Install attempt $attempt"
-            rm -rf node_modules
-            npm cache clean --force
-            npm ci --no-audit --no-fund && node -e "
-              for (const m of ['react','vite','typescript']) require.resolve(m + '/package.json');
-            " && ok=true && break
-            echo "Attempt $attempt failed, retrying..."
-          done
-          if [ "$ok" != "true" ]; then
-            echo "::group::npm debug logs"
-            for f in /home/runner/.npm/_logs/*.log; do
-              echo "=== $f ==="
-              tail -n 200 "$f" || true
-            done
-            echo "::endgroup::"
-            echo "::error::Failed to install a complete node_modules after 3 attempts"
-            exit 1
-          fi
-        env:
-          npm_config_registry: https://registry.npmjs.org/
+        run: npm ci --no-audit --no-fund
 
       - name: Build
         run: npm run build
