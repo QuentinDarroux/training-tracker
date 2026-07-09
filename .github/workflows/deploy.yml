@@ -59,6 +59,12 @@ jobs:
             echo "Attempt $attempt failed, retrying..."
           done
           if [ "$ok" != "true" ]; then
+            echo "::group::npm debug logs"
+            for f in /home/runner/.npm/_logs/*.log; do
+              echo "=== $f ==="
+              tail -n 200 "$f" || true
+            done
+            echo "::endgroup::"
             echo "::error::Failed to install a complete node_modules after 3 attempts"
             exit 1
           fi
