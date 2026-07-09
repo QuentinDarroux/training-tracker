@@ -28,14 +28,31 @@ jobs:
           cache: 'npm'
 
       - name: Install dependencies
-        # Pin a known-good npm release: some npm versions bundled with
-        # recent runner images intermittently crash during `npm ci` with
-        # "Exit handler never called!" (npm/cli#4028), which truncates
-        # node_modules while still reporting success. Pin + retry to
-        # guard against it.
+        # Works around a real npm bug (npm/cli#4028, "Exit handler never
+        # called!") seen on this runner's npm 10.8.2: npm ci can crash
+        # mid-install (truncating node_modules) while still exiting 0,
+        # so `npm ci || npm ci` never retries. Instead, verify a few key
+        # packages actually landed on disk and retry based on that, not
+        # npm's own exit code.
         run: |
-          npm install -g npm@10.8.2
-          npm ci || npm ci
+          set +e
+          success=0
+          for attempt in 1 2 3; do
+            echo "Install attempt $attempt"
+            rm -rf node_modules
+            npm ci --no-audit --no-fund
+            if [ -d node_modules/react ] && [ -d node_modules/typescript ] && [ -d node_modules/vite ]; then
+              echo "Dependencies verified present."
+              success=1
+              break
+            fi
+            echo "Dependencies missing/incomplete after attempt $attempt, retrying..."
+          done
+          set -e
+          if [ "$success" != "1" ]; then
+            echo "::error::Failed to install a complete node_modules after 3 attempts"
+            exit 1
+          fi
 
       - name: Build
         run: npm run build
