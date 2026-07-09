@@ -103,28 +103,28 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
     const config = getGhConfig()
     if (!config) throw new Error('Configurez d\'abord owner/repo GitHub')
 
-    try {
-      if (modalAction === 'test') {
-        const msg = await testConnection(config, token)
-        showMsg(msg)
-      } else if (modalAction === 'save') {
-        const data = await exportData()
-        await saveToGithub(config, token, data)
-        if (settings) {
-          await onUpdateSettings({ ...settings, lastLocalBackup: new Date().toISOString() })
-        }
-        showMsg('Sauvegarde GitHub réussie !')
-      } else if (modalAction === 'restore') {
-        const data = await restoreFromGithub(config, token)
-        if (!confirm('Restaurer depuis GitHub ? Les données seront fusionnées.')) return
-        await importData(data)
-        await onReload()
-        showMsg('Restauration GitHub réussie !')
+    // On error, this throws and TokenModal's own catch displays it inline
+    // (the modal stays open). Only close the modal after a real success —
+    // closing it unconditionally in a `finally` here would unmount
+    // TokenModal before it gets a chance to show the error.
+    if (modalAction === 'test') {
+      const msg = await testConnection(config, token)
+      showMsg(msg)
+    } else if (modalAction === 'save') {
+      const data = await exportData()
+      await saveToGithub(config, token, data)
+      if (settings) {
+        await onUpdateSettings({ ...settings, lastLocalBackup: new Date().toISOString() })
       }
-    } finally {
-      // Token is used and cleared — it was only in function scope
-      setModalAction(null)
+      showMsg('Sauvegarde GitHub réussie !')
+    } else if (modalAction === 'restore') {
+      const data = await restoreFromGithub(config, token)
+      if (!confirm('Restaurer depuis GitHub ? Les données seront fusionnées.')) return
+      await importData(data)
+      await onReload()
+      showMsg('Restauration GitHub réussie !')
     }
+    setModalAction(null)
   }
 
   return (
