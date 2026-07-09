@@ -64,6 +64,17 @@ jobs:
           done
           set -e
           if [ "$success" != "1" ]; then
+            echo "::group::npm debug logs (diagnostic)"
+            for f in /home/runner/.npm/_logs/*.log; do
+              echo "=== $f ==="
+              cat "$f" || true
+            done
+            echo "::endgroup::"
+            echo "::group::node_modules state"
+            echo "node_modules dir count: $(ls node_modules 2>/dev/null | wc -l)"
+            df -h .
+            free -h
+            echo "::endgroup::"
             echo "::error::Failed to install a complete node_modules after 3 attempts"
             exit 1
           fi
