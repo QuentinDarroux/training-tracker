@@ -4,7 +4,7 @@ import PageLayout from '../components/PageLayout'
 import WorkoutBadge from '../components/WorkoutBadge'
 import EmptyState from '../components/EmptyState'
 import SegmentedControl from '../components/SegmentedControl'
-import type { DatedPlanEntry, Workout, WorkoutSession, UserSettings } from '../types'
+import type { DatedPlanEntry, Workout, WorkoutSession, UserSettings, WorkoutType } from '../types'
 import { formatDate, getWeekStart, parseLocalDate, today, toLocalDateString } from '../utils/calc'
 import {
   getAllPlanEntries,
@@ -22,6 +22,7 @@ interface Props {
 
 type PlanningTab = 'week' | 'all'
 type FrequencyMode = 'unique' | 'recurring'
+type WorkoutSource = 'catalog' | 'custom'
 
 export default function PlanningPage({ sessions, settings, workouts, onCreateSession, onUpdateSettings }: Props) {
   const navigate = useNavigate()
@@ -30,7 +31,11 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
   const [weekStartDate, setWeekStartDate] = useState(getWeekStart(today()))
   const [showAddEntry, setShowAddEntry] = useState(false)
   const [addMessage, setAddMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+  const [workoutSource, setWorkoutSource] = useState<WorkoutSource>('catalog')
   const [newWorkoutId, setNewWorkoutId] = useState('')
+  const [customWorkoutTitle, setCustomWorkoutTitle] = useState('')
+  const [customWorkoutType, setCustomWorkoutType] = useState<WorkoutType>('running')
+  const [customWorkoutDescription, setCustomWorkoutDescription] = useState('')
   const [newDate, setNewDate] = useState(today())
   const [newLabel, setNewLabel] = useState('Séance')
   const [frequencyMode, setFrequencyMode] = useState<FrequencyMode>('unique')
@@ -102,9 +107,25 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
       return
     }
 
-    const workoutId = newWorkoutId || workouts[0]?.id
+    const customTitle = customWorkoutTitle.trim()
+    const customDescription = customWorkoutDescription.trim()
+    const customWorkout: Workout | null = workoutSource === 'custom'
+      ? {
+          id: uniqueWorkoutId(slugify(customTitle || 'entrainement'), workouts),
+          title: customTitle,
+          type: customWorkoutType,
+          description: customDescription || 'Entraînement ajouté depuis le planning.',
+          exercises: [],
+        }
+      : null
+    const workoutId = customWorkout?.id ?? (newWorkoutId || workouts[0]?.id)
+
+    if (workoutSource === 'custom' && !customTitle) {
+      showAddMsg('Donne un nom à ton entraînement custom.', 'error')
+      return
+    }
     if (!workoutId) {
-      showAddMsg('Aucun entraînement disponible à planifier.', 'error')
+      showAddMsg('Choisis un entraînement du catalogue ou crée un entraînement custom.', 'error')
       return
     }
     if (!newDate) {
@@ -133,6 +154,7 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
     })
 
     const existingEntries = settings.plan?.type === 'dated' ? settings.plan.entries : []
+    const updatedWorkouts = customWorkout ? [...workouts, customWorkout] : workouts
     const updated: UserSettings = {
       ...settings,
       plan: {
@@ -140,13 +162,19 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
         entries: [...existingEntries, ...generatedEntries]
           .sort((a, b) => a.date.localeCompare(b.date) || planEntryId(a).localeCompare(planEntryId(b))),
       },
-      workouts,
+      workouts: updatedWorkouts,
       trainingConfigUpdatedAt: new Date().toISOString(),
     }
 
     await onUpdateSettings(updated)
     setTab('all')
     setShowAddEntry(false)
+    if (customWorkout) {
+      setNewWorkoutId(customWorkout.id)
+      setWorkoutSource('catalog')
+      setCustomWorkoutTitle('')
+      setCustomWorkoutDescription('')
+    }
     showAddMsg(`${generatedEntries.length} entraînement${generatedEntries.length > 1 ? 's' : ''} ajouté${generatedEntries.length > 1 ? 's' : ''} au planning.`)
   }
 
@@ -181,22 +209,68 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
 
         {showAddEntry && (
           <form onSubmit={handleAddPlanEntries} className="space-y-3">
-            <div>
-              <label className="label">Entraînement</label>
-              <select
-                value={newWorkoutId || workouts[0]?.id || ''}
-                onChange={event => setNewWorkoutId(event.target.value)}
-                className="input-field"
-              >
-                {workouts.map(workout => (
-                  <option key={workout.id} value={workout.id}>
-                    {workout.title} · {workout.type}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <SegmentedControl
+              value={workoutSource}
+              onChange={setWorkoutSource}
+              options={[
+                { value: 'catalog', label: 'Catalogue' },
+                { value: 'custom', label: 'Custom' },
+              ]}
+            />
 
-            <div className="grid grid-cols-2 gap-2">
+            {workoutSource === 'catalog' ? (
+              <div>
+                <label className="label">Entraînement</label>
+                <select
+                  value={newWorkoutId || workouts[0]?.id || ''}
+                  onChange={event => setNewWorkoutId(event.target.value)}
+                  className="input-field"
+                >
+                  {workouts.map(workout => (
+                    <option key={workout.id} value={workout.id}>
+                      {workout.title} · {workout.type}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            ) : (
+              <div className="space-y-2 rounded-2xl border border-gray-700/70 p-3">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                  <div>
+                    <label className="label">Nom</label>
+                    <input
+                      value={customWorkoutTitle}
+                      onChange={event => setCustomWorkoutTitle(event.target.value)}
+                      className="input-field"
+                      placeholder="Footing facile"
+                    />
+                  </div>
+                  <div>
+                    <label className="label">Type</label>
+                    <select
+                      value={customWorkoutType}
+                      onChange={event => setCustomWorkoutType(event.target.value as WorkoutType)}
+                      className="input-field"
+                    >
+                      <option value="running">Course</option>
+                      <option value="strength">Muscu</option>
+                      <option value="rest">Repos</option>
+                    </select>
+                  </div>
+                </div>
+                <div>
+                  <label className="label">Description</label>
+                  <textarea
+                    value={customWorkoutDescription}
+                    onChange={event => setCustomWorkoutDescription(event.target.value)}
+                    className="input-field min-h-[72px]"
+                    placeholder="Objectif, intensité, consignes..."
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <div>
                 <label className="label">Date de départ</label>
                 <input
@@ -217,19 +291,22 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
               </div>
             </div>
 
-            <SegmentedControl
-              value={frequencyMode}
-              onChange={setFrequencyMode}
-              options={[
-                { value: 'unique', label: 'Unique' },
-                { value: 'recurring', label: 'Chaque X jours' },
-              ]}
-            />
+            <button
+              type="button"
+              onClick={() => setFrequencyMode(frequencyMode === 'unique' ? 'recurring' : 'unique')}
+              className={`w-full rounded-2xl px-4 py-3 text-sm font-semibold transition ${
+                frequencyMode === 'recurring'
+                  ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/20'
+                  : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+              }`}
+            >
+              {frequencyMode === 'recurring' ? 'RÉPÉTITION' : 'UNIQUE'}
+            </button>
 
             {frequencyMode === 'recurring' && (
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
-                  <label className="label">Tous les X jours</label>
+                  <label className="label">Intervalle en jours</label>
                   <input
                     type="number"
                     min={1}
@@ -351,4 +428,23 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
       )}
     </PageLayout>
   )
+}
+
+function slugify(value: string): string {
+  return value
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_+|_+$/g, '') || 'entrainement'
+}
+
+function uniqueWorkoutId(baseId: string, workouts: Workout[]): string {
+  const existingIds = new Set(workouts.map(workout => workout.id))
+  if (!existingIds.has(baseId)) return baseId
+
+  let index = 2
+  while (existingIds.has(`${baseId}_${index}`)) index += 1
+  return `${baseId}_${index}`
 }
