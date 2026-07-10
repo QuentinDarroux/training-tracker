@@ -2,6 +2,7 @@ import { useState, type ReactNode, type TouchEvent } from 'react'
 
 const REFRESH_THRESHOLD = 78
 const MAX_PULL = 112
+const MIN_REFRESH_FEEDBACK_MS = 650
 
 interface Props {
   children: ReactNode
@@ -11,6 +12,7 @@ export default function PullToRefresh({ children }: Props) {
   const [startY, setStartY] = useState<number | null>(null)
   const [pullDistance, setPullDistance] = useState(0)
   const [refreshing, setRefreshing] = useState(false)
+  const [finishing, setFinishing] = useState(false)
 
   const canStartPull = (target: EventTarget) => {
     if (window.scrollY > 0 || refreshing) return false
@@ -51,12 +53,19 @@ export default function PullToRefresh({ children }: Props) {
   const refreshApp = async () => {
     setRefreshing(true)
     setPullDistance(REFRESH_THRESHOLD)
+    const startedAt = Date.now()
     try {
       if ('serviceWorker' in navigator) {
         const registration = await navigator.serviceWorker.getRegistration()
         await registration?.update()
       }
     } finally {
+      const elapsed = Date.now() - startedAt
+      if (elapsed < MIN_REFRESH_FEEDBACK_MS) {
+        await new Promise(resolve => setTimeout(resolve, MIN_REFRESH_FEEDBACK_MS - elapsed))
+      }
+      setFinishing(true)
+      await new Promise(resolve => setTimeout(resolve, 280))
       window.location.reload()
     }
   }
@@ -70,8 +79,19 @@ export default function PullToRefresh({ children }: Props) {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
       onTouchCancel={handleTouchEnd}
-      className="min-h-screen"
+      className={`min-h-screen ${finishing ? 'pull-refresh-page-leaving' : ''}`}
     >
+      {refreshing && (
+        <div className="pull-refresh-overlay" aria-live="polite">
+          <div className="pull-refresh-overlay-card">
+            <div className="pull-refresh-spinner pull-refresh-spinning" />
+            <div>
+              <p className="font-semibold text-gray-200">Mise à jour de l’app</p>
+              <p className="text-xs text-gray-500">On recharge proprement la PWA...</p>
+            </div>
+          </div>
+        </div>
+      )}
       <div
         className={`pull-refresh-indicator ${pullDistance > 0 || refreshing ? 'pull-refresh-visible' : ''}`}
         style={{ transform: `translate(-50%, ${Math.max(-54, pullDistance - 54)}px)` }}
