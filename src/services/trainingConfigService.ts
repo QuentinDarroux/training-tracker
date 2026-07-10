@@ -1,6 +1,5 @@
 import type {
   DatedPlanEntry,
-  Exercise,
   TrainingConfig,
   TrainingPlan,
   UserSettings,
@@ -68,20 +67,149 @@ export function applyTrainingConfig(settings: UserSettings, config: TrainingConf
 }
 
 export function validateTrainingConfig(data: unknown): data is TrainingConfig {
-  if (!isObject(data)) return false
-  if (typeof data.version !== 'string') return false
-  if (typeof data.exportedAt !== 'string') return false
-  if (data.weeklyPlan !== undefined && !isWeeklyPlan(data.weeklyPlan)) return false
-  if (data.plan !== undefined && !isTrainingPlan(data.plan)) return false
-  if (data.weeklyPlan === undefined && data.plan === undefined) return false
-  if (!Array.isArray(data.workouts) || data.workouts.length === 0) return false
-  if (!data.workouts.every(isWorkout)) return false
+  return getTrainingConfigValidationErrors(data).length === 0
+}
 
-  const workoutIds = new Set(data.workouts.map(workout => workout.id))
-  const weeklyPlan = data.weeklyPlan
-  if (weeklyPlan && !dayKeys.every(day => workoutIds.has(weeklyPlan[day]))) return false
-  if (data.plan?.type === 'dated' && !data.plan.entries.every(entry => workoutIds.has(entry.workoutId))) return false
-  return true
+export function getTrainingConfigValidationErrors(data: unknown): string[] {
+  const errors: string[] = []
+  if (!isObject(data)) return ['La configuration doit être un objet JSON.']
+  if (typeof data.version !== 'string') errors.push('`version` doit être une chaîne.')
+  if (typeof data.exportedAt !== 'string') errors.push('`exportedAt` doit être une chaîne ISO.')
+  if (data.weeklyPlan !== undefined && !isWeeklyPlan(data.weeklyPlan)) {
+    errors.push('`weeklyPlan` est invalide: il doit contenir monday..sunday avec des ids non vides.')
+  }
+  if (data.plan !== undefined && !isTrainingPlan(data.plan)) {
+    errors.push('`plan` est invalide: seul `{ "type": "dated", "entries": [...] }` est supporté.')
+  }
+  if (data.weeklyPlan === undefined && data.plan === undefined) {
+    errors.push('La configuration doit contenir `plan` ou `weeklyPlan`.')
+  }
+  if (!Array.isArray(data.workouts) || data.workouts.length === 0) {
+    errors.push('`workouts` doit être un tableau non vide.')
+  } else {
+    data.workouts.forEach((workout, index) => {
+      errors.push(...getWorkoutValidationErrors(workout, `workouts[${index}]`))
+    })
+  }
+
+  if (errors.length > 0) return errors
+
+  const workouts = data.workouts as Workout[]
+  const weeklyPlan = data.weeklyPlan as WeeklyPlan | undefined
+  const plan = data.plan as TrainingPlan | undefined
+  const workoutIds = new Set(workouts.map(workout => workout.id))
+  if (weeklyPlan) {
+    for (const day of dayKeys) {
+      if (!workoutIds.has(weeklyPlan[day])) {
+        errors.push(`weeklyPlan.${day} référence un workout inexistant: ${weeklyPlan[day]}`)
+      }
+    }
+  }
+  if (plan?.type === 'dated') {
+    plan.entries.forEach((entry, index) => {
+      if (!workoutIds.has(entry.workoutId)) {
+        errors.push(`plan.entries[${index}].workoutId référence un workout inexistant: ${entry.workoutId}`)
+      }
+    })
+  }
+  return errors
+}
+
+export function trainingConfigPrompt(): string {
+  return `Generate a valid Training Tracker training-config.json.
+
+Return JSON only. Do not wrap it in markdown.
+
+Accepted top-level shape:
+{
+  "version": "1.0.0",
+  "exportedAt": "<ISO datetime>",
+  "plan": {
+    "type": "dated",
+    "entries": [
+      { "date": "YYYY-MM-DD", "label": "Matin", "workoutId": "renfo_a" }
+    ]
+  },
+  "workouts": []
+}
+
+Rules:
+1. Use either "plan" or legacy "weeklyPlan"; prefer "plan".
+2. For "plan", only { "type": "dated", "entries": [...] } is supported.
+3. plan.entries[] fields:
+   - optional "id": string
+   - "date": string in YYYY-MM-DD format
+   - "label": non-empty string displayed to the user
+   - "workoutId": non-empty string matching one existing workouts[].id
+4. Multiple entries may have the same date.
+5. workouts[] must be a non-empty array.
+6. Workout fields:
+   - "id": non-empty stable string, preferably lowercase snake_case
+   - "title": non-empty string
+   - "type": one of "strength", "running", "rest"
+   - "description": string
+   - "exercises": array
+7. Running and rest workouts should usually have "exercises": [].
+8. Exercise fields:
+   - "id": non-empty stable string
+   - "name": non-empty string
+   - "sets": number
+   - "reps": number
+   - "unit": one of "reps", "seconds", "minutes"
+   - "trackWeight": boolean
+   - "trackDuration": boolean
+   - "side": one of "both", "left", "right", "unilateral"
+9. Every plan entry workoutId must exist in workouts.
+10. Do not invent unsupported fields unless they are harmless metadata at top level.
+11. Preserve stable workout and exercise ids when updating an existing plan, because history is linked by ids.
+
+Example:
+{
+  "version": "1.0.0",
+  "exportedAt": "2026-07-10T08:00:00.000Z",
+  "plan": {
+    "type": "dated",
+    "entries": [
+      { "date": "2026-07-20", "label": "J1 matin", "workoutId": "renfo_a" },
+      { "date": "2026-07-20", "label": "J1 après-midi", "workoutId": "footing_ef" },
+      { "date": "2026-07-21", "label": "J2 repos", "workoutId": "repos" }
+    ]
+  },
+  "workouts": [
+    {
+      "id": "renfo_a",
+      "title": "Renforcement A",
+      "type": "strength",
+      "description": "Jambes + core",
+      "exercises": [
+        {
+          "id": "squat",
+          "name": "Squats",
+          "sets": 3,
+          "reps": 12,
+          "unit": "reps",
+          "trackWeight": true,
+          "trackDuration": false,
+          "side": "both"
+        }
+      ]
+    },
+    {
+      "id": "footing_ef",
+      "title": "Footing EF",
+      "type": "running",
+      "description": "Endurance fondamentale facile.",
+      "exercises": []
+    },
+    {
+      "id": "repos",
+      "title": "Repos",
+      "type": "rest",
+      "description": "Récupération.",
+      "exercises": []
+    }
+  ]
+}`
 }
 
 export function planEntryId(entry: DatedPlanEntry): string {
@@ -162,30 +290,39 @@ function isDateString(value: unknown): value is string {
   return typeof value === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(value)
 }
 
-function isWorkout(value: unknown): value is Workout {
-  if (!isObject(value)) return false
-  return typeof value.id === 'string'
-    && value.id.trim().length > 0
-    && typeof value.title === 'string'
-    && value.title.trim().length > 0
-    && ['strength', 'running', 'rest'].includes(String(value.type))
-    && typeof value.description === 'string'
-    && Array.isArray(value.exercises)
-    && value.exercises.every(isExercise)
+function getWorkoutValidationErrors(value: unknown, path: string): string[] {
+  const errors: string[] = []
+  if (!isObject(value)) return [`${path} doit être un objet.`]
+  if (typeof value.id !== 'string' || !value.id.trim()) errors.push(`${path}.id doit être une chaîne non vide.`)
+  if (typeof value.title !== 'string' || !value.title.trim()) errors.push(`${path}.title doit être une chaîne non vide.`)
+  if (!['strength', 'running', 'rest'].includes(String(value.type))) errors.push(`${path}.type doit être strength, running ou rest.`)
+  if (typeof value.description !== 'string') errors.push(`${path}.description doit être une chaîne.`)
+  if (!Array.isArray(value.exercises)) {
+    errors.push(`${path}.exercises doit être un tableau.`)
+  } else {
+    value.exercises.forEach((exercise, index) => {
+      errors.push(...getExerciseValidationErrors(exercise, `${path}.exercises[${index}]`))
+    })
+  }
+  return errors
 }
 
-function isExercise(value: unknown): value is Exercise {
-  if (!isObject(value)) return false
-  return typeof value.id === 'string'
-    && value.id.trim().length > 0
-    && typeof value.name === 'string'
-    && value.name.trim().length > 0
-    && typeof value.sets === 'number'
-    && typeof value.reps === 'number'
-    && ['reps', 'seconds'].includes(String(value.unit))
-    && typeof value.trackWeight === 'boolean'
-    && typeof value.trackDuration === 'boolean'
-    && ['both', 'left', 'right', 'unilateral'].includes(String(value.side))
+function getExerciseValidationErrors(value: unknown, path: string): string[] {
+  const errors: string[] = []
+  if (!isObject(value)) return [`${path} doit être un objet.`]
+  if (typeof value.id !== 'string' || !value.id.trim()) errors.push(`${path}.id doit être une chaîne non vide.`)
+  if (typeof value.name !== 'string' || !value.name.trim()) errors.push(`${path}.name doit être une chaîne non vide.`)
+  if (typeof value.sets !== 'number') errors.push(`${path}.sets doit être un nombre.`)
+  if (typeof value.reps !== 'number') errors.push(`${path}.reps doit être un nombre.`)
+  if (!['reps', 'seconds', 'minutes'].includes(String(value.unit))) {
+    errors.push(`${path}.unit doit être reps, seconds ou minutes.`)
+  }
+  if (typeof value.trackWeight !== 'boolean') errors.push(`${path}.trackWeight doit être un booléen.`)
+  if (typeof value.trackDuration !== 'boolean') errors.push(`${path}.trackDuration doit être un booléen.`)
+  if (!['both', 'left', 'right', 'unilateral'].includes(String(value.side))) {
+    errors.push(`${path}.side doit être both, left, right ou unilateral.`)
+  }
+  return errors
 }
 
 function isObject(value: unknown): value is Record<string, unknown> {

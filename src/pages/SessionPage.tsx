@@ -78,7 +78,7 @@ export default function SessionPage({
           plannedReps: ex.reps,
           actualReps: ex.reps,
           weight: 0,
-          duration: ex.unit === 'seconds' ? ex.reps : undefined,
+          duration: ex.unit !== 'reps' ? ex.reps : undefined,
         }]
       }
     }
@@ -296,7 +296,7 @@ export default function SessionPage({
               <div className="flex items-center justify-between">
                 <h4 className="font-medium text-gray-200">{ex.name}</h4>
                 <span className="text-xs text-gray-500">
-                  Prévu: {ex.sets}×{ex.reps}{ex.unit === 'seconds' ? 's' : ''}
+                  Prévu: {ex.sets}×{ex.reps}{ex.unit === 'seconds' ? 's' : ex.unit === 'minutes' ? 'min' : ''}
                   {ex.side === 'unilateral' ? '/jambe' : ''}
                 </span>
               </div>
@@ -309,11 +309,11 @@ export default function SessionPage({
                 </div>
                 <div>
                   <label className="label text-xs">
-                    {ex.unit === 'seconds' ? 'Durée (s)' : 'Reps'}
+                    {ex.unit === 'seconds' ? 'Durée (s)' : ex.unit === 'minutes' ? 'Durée (min)' : 'Reps'}
                   </label>
                   <input type="number"
-                    value={ex.unit === 'seconds' ? (sets.duration ?? ex.reps) : sets.actualReps}
-                    onChange={e => updateSet(ex.id, ex.unit === 'seconds' ? 'duration' : 'actualReps', e.target.value)}
+                    value={ex.unit !== 'reps' ? (sets.duration ?? ex.reps) : sets.actualReps}
+                    onChange={e => updateSet(ex.id, ex.unit !== 'reps' ? 'duration' : 'actualReps', e.target.value)}
                     className="input-field text-center" min={0} />
                 </div>
                 {ex.trackWeight && (

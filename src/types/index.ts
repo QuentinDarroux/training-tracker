@@ -5,7 +5,7 @@ export interface Exercise {
   name: string
   sets: number
   reps: number
-  unit: 'reps' | 'seconds'
+  unit: 'reps' | 'seconds' | 'minutes'
   trackWeight: boolean
   trackDuration: boolean
   side: 'both' | 'left' | 'right' | 'unilateral'

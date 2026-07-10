@@ -62,7 +62,7 @@ export default function ExercicesPage({ strengthPerfs, workouts, suggestions }: 
                   <div>
                     <div className="font-medium text-gray-200">{ex.name}</div>
                     <div className="text-xs text-gray-500">
-                      Prévu: {ex.sets}×{ex.reps}{ex.unit === 'seconds' ? 's' : ''}
+                      Prévu: {ex.sets}×{ex.reps}{ex.unit === 'seconds' ? 's' : ex.unit === 'minutes' ? 'min' : ''}
                       {ex.side === 'unilateral' ? '/jambe' : ''}
                     </div>
                   </div>

@@ -53,7 +53,7 @@ An agent generating this file must follow these rules:
 5. `rest` and `running` workouts should use `"exercises": []`.
 6. `strength` workouts should list one or more exercises.
 7. Every exercise `id` must be unique enough to avoid ambiguity in performance history. Prefer stable ids; do not rename ids casually.
-8. Exercise `unit` must be either `reps` or `seconds`.
+8. Exercise `unit` must be one of `reps`, `seconds`, or `minutes`.
 9. Exercise `side` must be one of: `both`, `left`, `right`, `unilateral`.
 10. Use numbers for `sets` and `reps`, not strings.
 

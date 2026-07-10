@@ -1,7 +1,7 @@
 import { useState, useRef } from 'react'
 import PageLayout from '../components/PageLayout'
 import TokenModal from '../components/TokenModal'
-import type { UserSettings, GithubBackupConfig } from '../types'
+import type { UserSettings, GithubBackupConfig, TrainingConfig } from '../types'
 import { exportData, downloadJson, validateImportData, importData } from '../services/backupService'
 import {
   restoreConfigFromGithub,
@@ -14,7 +14,8 @@ import { resetAllData, saveSettings } from '../services/storageService'
 import {
   applyTrainingConfig,
   exportTrainingConfig,
-  validateTrainingConfig,
+  getTrainingConfigValidationErrors,
+  trainingConfigPrompt,
 } from '../services/trainingConfigService'
 
 interface Props {
@@ -148,8 +149,7 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
       await onReload()
       showMsg('Restauration GitHub réussie !')
     } else if (modalAction === 'push-config') {
-      const parsed = JSON.parse(trainingConfigText) as unknown
-      if (!validateTrainingConfig(parsed)) throw new Error('Configuration entraînements invalide.')
+      const parsed = parseTrainingConfigText()
       await saveConfigToGithub(config, token, parsed)
       alert('Configuration poussée dans GitHub. Attends la fin du rebuild/déploiement GitHub Actions, puis recharge l’app. La date de build au-dessus de la barre du bas doit changer.')
       showMsg('Configuration poussée vers GitHub. Attendez le rebuild avant de recharger.')
@@ -172,18 +172,37 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
   const applyTrainingConfigText = async () => {
     if (!settings) return
     try {
-      const parsed = JSON.parse(trainingConfigText) as unknown
-      if (!validateTrainingConfig(parsed)) {
-        showMsg('Configuration entraînements invalide', 'error')
-        return
-      }
+      const parsed = parseTrainingConfigText()
       const updated = applyTrainingConfig(settings, parsed)
       await onUpdateSettings(updated)
       await onReload()
       showMsg('Configuration appliquée localement.')
-    } catch {
-      showMsg('JSON invalide dans la configuration entraînements', 'error')
+    } catch (error) {
+      showMsg(error instanceof Error ? error.message : 'Configuration entraînements invalide', 'error')
     }
+  }
+
+  const copyTrainingConfigPrompt = async () => {
+    try {
+      await navigator.clipboard.writeText(trainingConfigPrompt())
+      showMsg('Prompt LLM copié dans le presse-papiers.')
+    } catch {
+      showMsg('Impossible de copier le prompt dans le presse-papiers.', 'error')
+    }
+  }
+
+  const parseTrainingConfigText = (): TrainingConfig => {
+    let parsed: unknown
+    try {
+      parsed = JSON.parse(trainingConfigText)
+    } catch {
+      throw new Error('JSON invalide dans la configuration entraînements.')
+    }
+    const errors = getTrainingConfigValidationErrors(parsed)
+    if (errors.length > 0) {
+      throw new Error(`Configuration entraînements invalide : ${errors.slice(0, 5).join(' ')}`)
+    }
+    return parsed as TrainingConfig
   }
 
   return (
@@ -326,6 +345,9 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
                   ✅ Appliquer local
                 </button>
               </div>
+              <button onClick={copyTrainingConfigPrompt} className="btn-secondary w-full text-sm">
+                📋 Copier prompt LLM pour générer ce JSON
+              </button>
               <button
                 onClick={() => setModalAction('push-config')}
                 disabled={!ghOwner || !ghRepo}

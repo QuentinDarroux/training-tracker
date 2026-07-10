@@ -112,7 +112,7 @@ export default function TodayPage({ sessions, settings, workouts, onCreateSessio
                       <div className="space-y-1">
                         {workout.exercises.map(ex => (
                           <div key={ex.id} className="text-sm text-gray-300">
-                            • {ex.name} — {ex.sets}x{ex.reps}{ex.unit === 'seconds' ? 's' : ''}
+                            • {ex.name} — {ex.sets}x{ex.reps}{ex.unit === 'seconds' ? 's' : ex.unit === 'minutes' ? 'min' : ''}
                             {ex.side === 'unilateral' ? '/jambe' : ''}
                           </div>
                         ))}
