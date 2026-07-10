@@ -137,11 +137,14 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
       showMsg(msg)
     } else if (modalAction === 'save') {
       const data = await exportData()
+      const trainingConfig = exportTrainingConfig(settings)
       await saveToGithub(config, token, data)
+      await saveConfigToGithub(config, token, trainingConfig)
       if (settings) {
         await onUpdateSettings({ ...settings, lastLocalBackup: new Date().toISOString() })
       }
-      showMsg('Sauvegarde GitHub réussie !')
+      alert('Sauvegarde complète poussée dans GitHub : données + training-config.json. Si la configuration a changé, attends la fin du rebuild/déploiement GitHub Actions, puis recharge l’app. La date de build au-dessus de la barre du bas doit changer.')
+      showMsg('Sauvegarde GitHub complète réussie !')
     } else if (modalAction === 'restore') {
       const data = await restoreFromGithub(config, token)
       if (!confirm('Restaurer depuis GitHub ? Les données seront fusionnées.')) return
@@ -285,7 +288,7 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
               disabled={!ghOwner || !ghRepo}
               className="btn-primary w-full disabled:opacity-50"
             >
-              ☁️ Sauvegarder vers GitHub
+              ☁️ Sauvegarder config + data vers GitHub
             </button>
             <button
               onClick={() => setModalAction('restore')}
