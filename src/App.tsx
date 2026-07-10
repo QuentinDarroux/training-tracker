@@ -41,7 +41,12 @@ export default function App() {
     <HashRouter>
       <Routes>
         <Route path="/" element={
-          <DashboardPage sessions={sessions} runningPerfs={runningPerfs} />
+          <DashboardPage
+            sessions={sessions}
+            runningPerfs={runningPerfs}
+            settings={settings}
+            workouts={workoutCatalog}
+          />
         } />
         <Route path="/planning" element={
           <PlanningPage
