@@ -1,5 +1,6 @@
 import { HashRouter, Routes, Route } from 'react-router-dom'
 import BottomNav from './components/BottomNav'
+import PullToRefresh from './components/PullToRefresh'
 import DashboardPage from './pages/DashboardPage'
 import PlanningPage from './pages/PlanningPage'
 import TodayPage from './pages/TodayPage'
@@ -60,78 +61,80 @@ export default function App() {
 
   return (
     <HashRouter>
-      <Routes>
-        <Route path="/" element={
-          <DashboardPage
-            sessions={sessions}
-            runningPerfs={runningPerfs}
-            settings={settings}
-            workouts={workoutCatalog}
-          />
-        } />
-        <Route path="/planning" element={
-          <PlanningPage
-            sessions={sessions}
-            settings={settings}
-            workouts={workoutCatalog}
-            onCreateSession={saveSession}
-            onUpdateSettings={updateSettings}
-          />
-        } />
-        <Route path="/aujourd-hui" element={
-          <TodayPage
-            sessions={sessions}
-            settings={settings}
-            workouts={workoutCatalog}
-            onCreateSession={saveSession}
-          />
-        } />
-        <Route path="/seance/:id" element={
-          <SessionPage
-            sessions={sessions}
-            strengthPerfs={strengthPerfs}
-            runningPerfs={runningPerfs}
-            workouts={workoutCatalog}
-            onSaveSession={saveSession}
-            onDeleteSession={deleteSession}
-            onSaveStrengthPerf={saveStrengthPerf}
-            onSaveRunningPerf={saveRunningPerf}
-            onDeleteStrengthPerf={deleteStrengthPerf}
-            onDeleteRunningPerf={deleteRunningPerf}
-          />
-        } />
-        <Route path="/historique" element={
-          <HistoriquePage
-            sessions={sessions}
-            runningPerfs={runningPerfs}
-            strengthPerfs={strengthPerfs}
-            onDeleteSession={deleteSession}
-          />
-        } />
-        <Route path="/exercices" element={
-          <ExercicesPage
-            strengthPerfs={strengthPerfs}
-            sessions={sessions}
-            workouts={workoutCatalog}
-            suggestions={suggestions}
-          />
-        } />
-        <Route path="/objectifs" element={
-          <ObjectifsPage
-            goals={goals}
-            sessions={sessions}
-            runningPerfs={runningPerfs}
-            onSaveGoals={updateGoals}
-          />
-        } />
-        <Route path="/settings" element={
-          <SettingsPage
-            settings={settings}
-            onReload={reload}
-            onUpdateSettings={updateSettings}
-          />
-        } />
-      </Routes>
+      <PullToRefresh>
+        <Routes>
+          <Route path="/" element={
+            <DashboardPage
+              sessions={sessions}
+              runningPerfs={runningPerfs}
+              settings={settings}
+              workouts={workoutCatalog}
+            />
+          } />
+          <Route path="/planning" element={
+            <PlanningPage
+              sessions={sessions}
+              settings={settings}
+              workouts={workoutCatalog}
+              onCreateSession={saveSession}
+              onUpdateSettings={updateSettings}
+            />
+          } />
+          <Route path="/aujourd-hui" element={
+            <TodayPage
+              sessions={sessions}
+              settings={settings}
+              workouts={workoutCatalog}
+              onCreateSession={saveSession}
+            />
+          } />
+          <Route path="/seance/:id" element={
+            <SessionPage
+              sessions={sessions}
+              strengthPerfs={strengthPerfs}
+              runningPerfs={runningPerfs}
+              workouts={workoutCatalog}
+              onSaveSession={saveSession}
+              onDeleteSession={deleteSession}
+              onSaveStrengthPerf={saveStrengthPerf}
+              onSaveRunningPerf={saveRunningPerf}
+              onDeleteStrengthPerf={deleteStrengthPerf}
+              onDeleteRunningPerf={deleteRunningPerf}
+            />
+          } />
+          <Route path="/historique" element={
+            <HistoriquePage
+              sessions={sessions}
+              runningPerfs={runningPerfs}
+              strengthPerfs={strengthPerfs}
+              onDeleteSession={deleteSession}
+            />
+          } />
+          <Route path="/exercices" element={
+            <ExercicesPage
+              strengthPerfs={strengthPerfs}
+              sessions={sessions}
+              workouts={workoutCatalog}
+              suggestions={suggestions}
+            />
+          } />
+          <Route path="/objectifs" element={
+            <ObjectifsPage
+              goals={goals}
+              sessions={sessions}
+              runningPerfs={runningPerfs}
+              onSaveGoals={updateGoals}
+            />
+          } />
+          <Route path="/settings" element={
+            <SettingsPage
+              settings={settings}
+              onReload={reload}
+              onUpdateSettings={updateSettings}
+            />
+          } />
+        </Routes>
+      </PullToRefresh>
       <BottomNav />
     </HashRouter>
   )
