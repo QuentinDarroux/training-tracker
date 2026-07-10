@@ -1,16 +1,25 @@
 <!doctype html>
-<html lang="fr" class="dark">
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="alternate icon" type="image/png" href="/icons/icon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#1e1e2e" />
+    <meta name="theme-color" content="#f4f7fb" />
     <meta name="description" content="Track your running and strength training sessions" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Training Tracker" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
+    <script>
+      (() => {
+        const theme = localStorage.getItem('training-tracker-theme') || 'system'
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+        const isDark = theme === 'dark' || (theme === 'system' && prefersDark)
+        document.documentElement.classList.toggle('dark', isDark)
+        document.documentElement.dataset.theme = isDark ? 'dark' : 'light'
+      })()
+    </script>
     <title>Training Tracker</title>
   </head>
   <body>

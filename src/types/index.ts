@@ -116,7 +116,7 @@ export interface UserGoal {
 }
 
 export interface UserSettings {
-  theme: 'dark' | 'light'
+  theme: 'dark' | 'light' | 'system'
   weeklyPlan: WeeklyPlan
   plan?: TrainingPlan
   workouts?: Workout[]

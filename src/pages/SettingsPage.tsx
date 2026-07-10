@@ -183,6 +183,12 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
     }
   }
 
+  const updateTheme = async (theme: UserSettings['theme']) => {
+    if (!settings) return
+    await onUpdateSettings({ ...settings, theme })
+    showMsg('Thème mis à jour.')
+  }
+
   const copyTrainingConfigPrompt = async () => {
     try {
       await navigator.clipboard.writeText(trainingConfigPrompt())
@@ -218,6 +224,35 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
             {message.text}
           </div>
         )}
+
+        {/* Appearance */}
+        <div className="card space-y-3">
+          <div>
+            <h3 className="font-medium text-gray-300">Apparence</h3>
+            <p className="text-xs text-gray-500 mt-1">
+              Le mode système suit automatiquement le thème clair/sombre du téléphone.
+            </p>
+          </div>
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { value: 'system', label: 'Auto' },
+              { value: 'light', label: 'Clair' },
+              { value: 'dark', label: 'Sombre' },
+            ].map(option => (
+              <button
+                key={option.value}
+                onClick={() => updateTheme(option.value as UserSettings['theme'])}
+                className={`rounded-xl px-3 py-2 text-sm font-medium transition ${
+                  (settings?.theme ?? 'system') === option.value
+                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25'
+                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
+                }`}
+              >
+                {option.label}
+              </button>
+            ))}
+          </div>
+        </div>
 
         {/* Local backup */}
         <div className="card space-y-3">

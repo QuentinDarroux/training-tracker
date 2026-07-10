@@ -11,7 +11,7 @@ import SettingsPage from './pages/SettingsPage'
 import { useData } from './hooks/useData'
 import { getStrengthSuggestions, getRunningSuggestions } from './services/progressService'
 import { getActiveWorkouts } from './services/trainingConfigService'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 
 export default function App() {
   const {
@@ -28,6 +28,27 @@ export default function App() {
     ...getRunningSuggestions(runningPerfs, sessions),
   ], [strengthPerfs, runningPerfs, sessions])
   const workoutCatalog = useMemo(() => getActiveWorkouts(settings), [settings])
+
+  useEffect(() => {
+    const root = document.documentElement
+    const metaThemeColor = document.querySelector<HTMLMetaElement>('meta[name="theme-color"]')
+
+    const applyTheme = () => {
+      const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+      const selectedTheme = settings?.theme ?? 'system'
+      const isDark = selectedTheme === 'dark' || (selectedTheme === 'system' && prefersDark)
+
+      localStorage.setItem('training-tracker-theme', selectedTheme)
+      root.classList.toggle('dark', isDark)
+      root.dataset.theme = isDark ? 'dark' : 'light'
+      metaThemeColor?.setAttribute('content', isDark ? '#10111f' : '#f4f7fb')
+    }
+
+    applyTheme()
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+    mediaQuery.addEventListener('change', applyTheme)
+    return () => mediaQuery.removeEventListener('change', applyTheme)
+  }, [settings?.theme])
 
   if (loading) {
     return (

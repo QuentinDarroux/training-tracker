@@ -70,7 +70,7 @@ async function getDB(): Promise<IDBPDatabase<TrainingTrackerDB>> {
 }
 
 const defaultSettings: UserSettings = {
-  theme: 'dark',
+  theme: 'system',
   weeklyPlan: defaultWeeklyPlan,
 }
 

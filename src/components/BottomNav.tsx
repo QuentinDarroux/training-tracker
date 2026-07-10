@@ -20,11 +20,11 @@ export default function BottomNav() {
   return (
     <>
       <div className="fixed bottom-[calc(env(safe-area-inset-bottom)+4.25rem)] left-0 right-0 z-50 pointer-events-none flex justify-center">
-        <div className="rounded-t-md bg-gray-900/95 border border-b-0 border-gray-700 px-2 py-0.5 text-[10px] text-gray-500">
+        <div className="glass-pill rounded-t-md px-2 py-0.5 text-[10px]">
           Build : {buildTime}
         </div>
       </div>
-      <nav className="fixed bottom-[calc(env(safe-area-inset-bottom)+0.5rem)] left-3 right-3 rounded-2xl bg-gray-900/95 border border-gray-700 z-50 shadow-lg backdrop-blur">
+      <nav className="glass-nav fixed bottom-[calc(env(safe-area-inset-bottom)+0.5rem)] left-3 right-3 rounded-2xl z-50">
         <div className="flex items-center justify-around max-w-lg mx-auto">
           {navItems.map(item => (
             <NavLink

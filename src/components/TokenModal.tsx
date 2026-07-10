@@ -30,8 +30,8 @@ export default function TokenModal({ title, onConfirm, onClose }: Props) {
   }
 
   return (
-    <div className="fixed inset-0 bg-black/70 z-50 flex items-center justify-center p-4">
-      <div className="bg-gray-800 rounded-xl p-6 w-full max-w-sm border border-gray-700">
+    <div className="glass-modal-backdrop fixed inset-0 z-50 flex items-center justify-center p-4">
+      <div className="card p-6 w-full max-w-sm">
         <h3 className="text-lg font-bold mb-2">{title}</h3>
         
         <div className="bg-yellow-900/30 border border-yellow-700 rounded-lg p-3 mb-4 text-xs text-yellow-300">
