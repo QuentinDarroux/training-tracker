@@ -159,7 +159,6 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
       const updated = applyTrainingConfig(settings, remoteConfig)
       await onUpdateSettings(updated)
       setTrainingConfigText(JSON.stringify(remoteConfig, null, 2))
-      await onReload()
       showMsg('Configuration entraînements restaurée depuis GitHub.')
     }
     setModalAction(null)
@@ -175,7 +174,6 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
       const parsed = parseTrainingConfigText()
       const updated = applyTrainingConfig(settings, parsed)
       await onUpdateSettings(updated)
-      await onReload()
       showMsg('Configuration appliquée localement.')
     } catch (error) {
       showMsg(error instanceof Error ? error.message : 'Configuration entraînements invalide', 'error')

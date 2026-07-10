@@ -42,7 +42,16 @@ export function useData() {
     let setts = storedSettings
     try {
       const deployedConfig = await fetchDeployedTrainingConfig()
-      if (deployedConfig) {
+      const localConfigTime = storedSettings.trainingConfigUpdatedAt
+        ? Date.parse(storedSettings.trainingConfigUpdatedAt)
+        : 0
+      const deployedConfigTime = Date.parse(deployedConfig?.exportedAt ?? '')
+      const shouldApplyDeployedConfig = !!deployedConfig && (
+        !storedSettings.plan
+        || !Number.isFinite(localConfigTime)
+        || (Number.isFinite(deployedConfigTime) && deployedConfigTime > localConfigTime)
+      )
+      if (shouldApplyDeployedConfig) {
         setts = applyTrainingConfig(storedSettings, deployedConfig)
         if (JSON.stringify(setts) !== JSON.stringify(storedSettings)) {
           await saveSetts(setts)

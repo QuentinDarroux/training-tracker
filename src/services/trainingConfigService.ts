@@ -63,6 +63,7 @@ export function applyTrainingConfig(settings: UserSettings, config: TrainingConf
     weeklyPlan: config.weeklyPlan ?? settings.weeklyPlan,
     plan: config.plan,
     workouts: config.workouts,
+    trainingConfigUpdatedAt: new Date().toISOString(),
   }
 }
 

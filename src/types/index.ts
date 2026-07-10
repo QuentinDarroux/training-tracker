@@ -120,6 +120,7 @@ export interface UserSettings {
   weeklyPlan: WeeklyPlan
   plan?: TrainingPlan
   workouts?: Workout[]
+  trainingConfigUpdatedAt?: string
   lastLocalBackup?: string
   githubBackup?: GithubBackupConfig
 }
