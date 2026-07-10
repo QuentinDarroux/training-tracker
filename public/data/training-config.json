@@ -1,14 +1,9 @@
 {
   "version": "1.0.0",
-  "exportedAt": "2026-07-10T12:37:58.681Z",
+  "exportedAt": "2026-07-10T12:48:53.793Z",
   "plan": {
     "type": "dated",
     "entries": [
-      {
-        "date": "2026-07-10",
-        "label": "test",
-        "workoutId": "renfo_force_bas"
-      },
       {
         "date": "2026-07-20",
         "label": "J001 S01 renfo A — Base aérobie",
