@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react'
 import PageLayout from '../components/PageLayout'
 import TokenModal from '../components/TokenModal'
+import SegmentedControl from '../components/SegmentedControl'
 import type { UserSettings, GithubBackupConfig, TrainingConfig } from '../types'
 import { exportData, downloadJson, validateImportData, importData } from '../services/backupService'
 import {
@@ -28,6 +29,7 @@ type ModalAction = 'save' | 'restore' | 'test' | 'push-config' | 'pull-config' |
 
 export default function SettingsPage({ settings, onReload, onUpdateSettings }: Props) {
   const [message, setMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+  const [rebuildNotice, setRebuildNotice] = useState<string | null>(null)
   const [modalAction, setModalAction] = useState<ModalAction>(null)
   const fileRef = useRef<HTMLInputElement>(null)
 
@@ -143,7 +145,7 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
       if (settings) {
         await onUpdateSettings({ ...settings, lastLocalBackup: new Date().toISOString() })
       }
-      alert('Sauvegarde complète poussée dans GitHub : données + training-config.json. Si la configuration a changé, attends la fin du rebuild/déploiement GitHub Actions, puis recharge l’app. La date de build au-dessus de la barre du bas doit changer.')
+      setRebuildNotice('Sauvegarde complète poussée : données + training-config.json. Si la config a changé, attends la fin du rebuild GitHub Actions puis recharge l’app. La date de build au-dessus de la barre du bas doit changer.')
       showMsg('Sauvegarde GitHub complète réussie !')
     } else if (modalAction === 'restore') {
       const data = await restoreFromGithub(config, token)
@@ -154,7 +156,7 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
     } else if (modalAction === 'push-config') {
       const parsed = parseTrainingConfigText()
       await saveConfigToGithub(config, token, parsed)
-      alert('Configuration poussée dans GitHub. Attends la fin du rebuild/déploiement GitHub Actions, puis recharge l’app. La date de build au-dessus de la barre du bas doit changer.')
+      setRebuildNotice('Configuration poussée dans GitHub. Attends le rebuild/déploiement GitHub Actions puis recharge l’app. La date de build au-dessus de la barre du bas doit changer.')
       showMsg('Configuration poussée vers GitHub. Attendez le rebuild avant de recharger.')
     } else if (modalAction === 'pull-config') {
       if (!settings) throw new Error('Réglages indisponibles.')
@@ -225,6 +227,24 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
           </div>
         )}
 
+        {rebuildNotice && (
+          <div className="card border-indigo-600/50 space-y-2">
+            <div className="flex items-start justify-between gap-3">
+              <div>
+                <p className="font-medium text-indigo-300">Rebuild requis</p>
+                <p className="text-sm text-gray-500 mt-1">{rebuildNotice}</p>
+              </div>
+              <button
+                onClick={() => setRebuildNotice(null)}
+                className="text-sm text-gray-500 hover:text-gray-300"
+                aria-label="Fermer"
+              >
+                ×
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Appearance */}
         <div className="card space-y-3">
           <div>
@@ -233,25 +253,15 @@ export default function SettingsPage({ settings, onReload, onUpdateSettings }: P
               Le mode système suit automatiquement le thème clair/sombre du téléphone.
             </p>
           </div>
-          <div className="grid grid-cols-3 gap-2">
-            {[
+          <SegmentedControl
+            value={settings?.theme ?? 'system'}
+            onChange={updateTheme}
+            options={[
               { value: 'system', label: 'Auto' },
               { value: 'light', label: 'Clair' },
               { value: 'dark', label: 'Sombre' },
-            ].map(option => (
-              <button
-                key={option.value}
-                onClick={() => updateTheme(option.value as UserSettings['theme'])}
-                className={`rounded-xl px-3 py-2 text-sm font-medium transition ${
-                  (settings?.theme ?? 'system') === option.value
-                    ? 'bg-indigo-600 text-white shadow-lg shadow-indigo-500/25'
-                    : 'bg-gray-700 text-gray-300 hover:bg-gray-600'
-                }`}
-              >
-                {option.label}
-              </button>
-            ))}
-          </div>
+            ]}
+          />
         </div>
 
         {/* Local backup */}

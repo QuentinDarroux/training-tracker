@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
+import EmptyState from '../components/EmptyState'
 import RatingInput from '../components/RatingInput'
 import type {
   WorkoutSession,
@@ -99,7 +100,13 @@ export default function SessionPage({
   if (!session || !workout) {
     return (
       <PageLayout title="Séance">
-        <div className="text-center py-8 text-gray-400">Séance introuvable</div>
+        <EmptyState
+          icon="🔎"
+          title="Séance introuvable"
+          description="Cette séance n’existe plus localement ou ne correspond plus au programme actif."
+          actionLabel="Retour au planning"
+          actionTo="/planning"
+        />
       </PageLayout>
     )
   }

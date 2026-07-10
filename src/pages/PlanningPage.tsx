@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import WorkoutBadge from '../components/WorkoutBadge'
+import EmptyState from '../components/EmptyState'
+import SegmentedControl from '../components/SegmentedControl'
 import type { DatedPlanEntry, Workout, WorkoutSession, UserSettings } from '../types'
 import { formatDate, getWeekStart, parseLocalDate, today, toLocalDateString } from '../utils/calc'
 import {
@@ -80,20 +82,15 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
 
   return (
     <PageLayout title="Planning">
-      <div className="flex gap-2 mb-4">
-        <button
-          onClick={() => setTab('week')}
-          className={`flex-1 rounded-lg px-3 py-2 text-sm ${tab === 'week' ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300'}`}
-        >
-          Semaine
-        </button>
-        <button
-          onClick={() => setTab('all')}
-          className={`flex-1 rounded-lg px-3 py-2 text-sm ${tab === 'all' ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300'}`}
-        >
-          Tout le programme
-        </button>
-      </div>
+      <SegmentedControl
+        value={tab}
+        onChange={setTab}
+        className="mb-4"
+        options={[
+          { value: 'week', label: 'Semaine' },
+          { value: 'all', label: 'Tout le programme' },
+        ]}
+      />
 
       {tab === 'week' && (
         <div className="flex items-center justify-between mb-4 text-sm">
@@ -110,9 +107,13 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
       )}
 
       {entries.length === 0 ? (
-        <div className="card text-center py-8 text-gray-500">
-          Aucun entraînement planifié.
-        </div>
+        <EmptyState
+          icon="📅"
+          title="Aucun entraînement planifié"
+          description="Importe ou applique une configuration avec un plan daté pour remplir cet écran."
+          actionLabel="Configurer les entraînements"
+          actionTo="/settings"
+        />
       ) : (
         <div className="space-y-2">
           {entries.map(entry => {

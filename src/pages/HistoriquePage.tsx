@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import PageLayout from '../components/PageLayout'
+import EmptyState from '../components/EmptyState'
+import SegmentedControl from '../components/SegmentedControl'
 import type { WorkoutSession, RunningPerformance, StrengthPerformance } from '../types'
 import { formatDate, formatPace, secondsToHMS } from '../utils/calc'
 import WorkoutBadge from '../components/WorkoutBadge'
@@ -22,22 +24,28 @@ export default function HistoriquePage({ sessions, runningPerfs, strengthPerfs, 
 
   return (
     <PageLayout title="Historique">
-      <div className="flex gap-2 mb-4 overflow-x-auto pb-1">
-        {(['all', 'running', 'strength', 'rest'] as const).map(f => (
-          <button
-            key={f}
-            onClick={() => setFilter(f)}
-            className={`px-3 py-1.5 rounded-full text-sm whitespace-nowrap transition-colors ${
-              filter === f ? 'bg-indigo-600 text-white' : 'bg-gray-700 text-gray-300'
-            }`}
-          >
-            {f === 'all' ? 'Tout' : f === 'running' ? '🏃 Course' : f === 'strength' ? '💪 Muscu' : '😴 Repos'}
-          </button>
-        ))}
-      </div>
+      <SegmentedControl
+        value={filter}
+        onChange={setFilter}
+        className="mb-4 overflow-x-auto"
+        options={[
+          { value: 'all', label: 'Tout' },
+          { value: 'running', label: 'Course' },
+          { value: 'strength', label: 'Muscu' },
+          { value: 'rest', label: 'Repos' },
+        ]}
+      />
 
       {filtered.length === 0 && (
-        <div className="text-center py-8 text-gray-500">Aucune séance enregistrée</div>
+        <EmptyState
+          icon="📋"
+          title={sessions.length === 0 ? 'Aucune séance enregistrée' : 'Aucun résultat pour ce filtre'}
+          description={sessions.length === 0
+            ? 'Démarre une séance depuis Aujourd’hui pour construire ton historique.'
+            : 'Essaie un autre filtre pour retrouver tes séances.'}
+          actionLabel={sessions.length === 0 ? 'Voir aujourd’hui' : undefined}
+          actionTo={sessions.length === 0 ? '/aujourd-hui' : undefined}
+        />
       )}
 
       <div className="space-y-2">

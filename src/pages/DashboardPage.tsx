@@ -5,6 +5,7 @@ import {
   BarChart, Bar, PieChart, Pie, Cell, Legend,
 } from 'recharts'
 import PageLayout from '../components/PageLayout'
+import EmptyState from '../components/EmptyState'
 import type { DatedPlanEntry, RunningPerformance, UserSettings, Workout, WorkoutSession } from '../types'
 import {
   getWeekStart,
@@ -175,33 +176,71 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
   const chartProps = {
     style: { fontSize: 11 },
   }
+  const tooltipStyle = {
+    background: 'var(--glass-card-strong)',
+    border: '1px solid var(--app-border)',
+    borderRadius: 12,
+    color: 'var(--app-text)',
+    boxShadow: 'var(--glass-shadow)',
+  }
 
   return (
     <PageLayout title="Training Tracker">
-      <div className="grid grid-cols-2 gap-3 mb-4">
-        <StatCard value={`${weekDone}/${actionableWeekEntries.length}`} label="Séances semaine" color="text-indigo-400" />
-        <StatCard value={`${weekAdherence}%`} label="Assiduité semaine" color="text-green-400" />
-        <StatCard value={`${programProgress}%`} label="Programme réalisé" color="text-purple-400" />
-        <StatCard value={weeklyVolume.toFixed(1)} label="km cette semaine" color="text-blue-400" />
-        <StatCard value={String(weekSkipped)} label="Séances passées" color="text-yellow-400" />
+      {nextPlanEntry && nextWorkout ? (
+        <div className="card mb-4 border-indigo-700">
+          <div className="flex items-start justify-between gap-4">
+            <div className="min-w-0">
+              <div className="text-xs font-medium uppercase tracking-wide text-gray-500">Prochaine séance</div>
+              <h2 className="mt-2 text-2xl font-bold text-gray-100">{nextWorkout.title}</h2>
+              <p className="mt-1 text-sm text-gray-400">
+                {formatDate(nextPlanEntry.date)} · {nextPlanEntry.label}
+              </p>
+              <p className="mt-3 line-clamp-2 text-sm text-gray-500">{nextWorkout.description}</p>
+            </div>
+            <div className="rounded-2xl bg-indigo-500/15 px-3 py-2 text-3xl">
+              {nextWorkout.type === 'strength' ? '💪' : '🏃'}
+            </div>
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-2">
+            <Link to="/aujourd-hui" className="btn-primary">
+              Voir aujourd’hui
+            </Link>
+            <Link to="/planning" className="btn-secondary">
+              Planning
+            </Link>
+          </div>
+        </div>
+      ) : allPlanEntries.length === 0 ? (
+        <div className="mb-4">
+          <EmptyState
+            icon="🧭"
+            title="Aucun programme actif"
+            description="Importe une config ou ouvre le planning pour commencer à organiser tes séances."
+            actionLabel="Ouvrir le planning"
+            actionTo="/planning"
+          />
+        </div>
+      ) : (
+        <div className="card mb-4 text-center space-y-3">
+          <div className="text-4xl">🏁</div>
+          <div>
+            <p className="font-semibold text-gray-200">Programme terminé</p>
+            <p className="text-sm text-gray-500">Toutes les séances actionnables sont faites ou passées.</p>
+          </div>
+          <Link to="/planning" className="btn-secondary w-full">Voir le programme</Link>
+        </div>
+      )}
+
+      <div className="grid grid-cols-3 gap-2 mb-4">
+        <StatCard value={`${weekDone}/${actionableWeekEntries.length}`} label="Semaine" color="text-indigo-400" />
+        <StatCard value={`${weekAdherence}%`} label="Assiduité" color="text-green-400" />
+        <StatCard value={`${programProgress}%`} label="Programme" color="text-purple-400" />
+        <StatCard value={weeklyVolume.toFixed(1)} label="km semaine" color="text-blue-400" />
+        <StatCard value={String(weekSkipped)} label="Passées" color="text-yellow-400" />
         <StatCard value={totalDistance.toFixed(1)} label="km total" color="text-cyan-400" />
       </div>
 
       <div className="grid grid-cols-1 gap-3 mb-4">
-        {nextPlanEntry && nextWorkout && (
-          <div className="card border-indigo-700">
-            <div className="text-xs text-gray-500 mb-1">Prochaine séance du programme</div>
-            <div className="flex items-center justify-between gap-3">
-              <div>
-                <div className="font-medium text-indigo-300">{nextWorkout.title}</div>
-                <div className="text-sm text-gray-400">
-                  {formatDate(nextPlanEntry.date)} · {nextPlanEntry.label}
-                </div>
-              </div>
-              <span className="text-2xl">{nextWorkout.type === 'strength' ? '💪' : '🏃'}</span>
-            </div>
-          </div>
-        )}
         {lastSession && (
           <div className="card">
             <div className="text-xs text-gray-500 mb-1">Dernière séance réalisée</div>
@@ -226,7 +265,7 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
                   <Cell key={entry.type} fill={typeColors[entry.type as keyof typeof typeColors]} />
                 ))}
               </Pie>
-              <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }} />
+              <Tooltip contentStyle={tooltipStyle} />
               <Legend wrapperStyle={{ fontSize: 11 }} />
             </PieChart>
           </ResponsiveContainer>
@@ -241,7 +280,7 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 10 }} />
               <YAxis allowDecimals={false} tick={{ fill: '#9ca3af', fontSize: 10 }} />
-              <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }} />
+              <Tooltip contentStyle={tooltipStyle} />
               <Bar dataKey="running" name="Course" stackId="a" fill={typeColors.running} radius={[4, 4, 0, 0]} />
               <Bar dataKey="strength" name="Muscu" stackId="a" fill={typeColors.strength} radius={[4, 4, 0, 0]} />
               <Bar dataKey="rest" name="Repos" stackId="a" fill={typeColors.rest} radius={[4, 4, 0, 0]} />
@@ -258,7 +297,7 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="label" tick={{ fill: '#9ca3af', fontSize: 10 }} interval="preserveStartEnd" />
               <YAxis tick={{ fill: '#9ca3af', fontSize: 10 }} />
-              <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }} />
+              <Tooltip contentStyle={tooltipStyle} />
               <Line type="monotone" dataKey="planned" name="Prévu" stroke="#818cf8" strokeWidth={2} dot={false} />
               <Line type="monotone" dataKey="done" name="Réalisé" stroke="#34d399" strokeWidth={2} dot={false} />
             </LineChart>
@@ -274,7 +313,7 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="week" tick={{ fill: '#9ca3af', fontSize: 10 }} />
               <YAxis tick={{ fill: '#9ca3af', fontSize: 10 }} />
-              <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }} />
+              <Tooltip contentStyle={tooltipStyle} />
               <Bar dataKey="km" fill="#6366f1" radius={[4,4,0,0]} />
             </BarChart>
           </ResponsiveContainer>
@@ -289,7 +328,7 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 10 }} />
               <YAxis domain={[0, 10]} tick={{ fill: '#9ca3af', fontSize: 10 }} />
-              <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }} />
+              <Tooltip contentStyle={tooltipStyle} />
               <Line type="monotone" dataKey="tfl" stroke="#f87171" strokeWidth={2} dot={{ fill: '#f87171', r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
@@ -306,7 +345,7 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
               <YAxis reversed tick={{ fill: '#9ca3af', fontSize: 10 }}
                 tickFormatter={v => formatPace(Math.round(v * 60))} />
               <Tooltip
-                contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }}
+                contentStyle={tooltipStyle}
                 formatter={(v: number) => [formatPace(Math.round(v * 60)), 'Allure']}
               />
               <Line type="monotone" dataKey="pace" stroke="#60a5fa" strokeWidth={2} dot={{ fill: '#60a5fa', r: 3 }} />
@@ -323,17 +362,10 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
               <CartesianGrid strokeDasharray="3 3" stroke="#374151" />
               <XAxis dataKey="date" tick={{ fill: '#9ca3af', fontSize: 10 }} />
               <YAxis tick={{ fill: '#9ca3af', fontSize: 10 }} />
-              <Tooltip contentStyle={{ backgroundColor: '#1f2937', border: '1px solid #374151', borderRadius: 8 }} />
+              <Tooltip contentStyle={tooltipStyle} />
               <Line type="monotone" dataKey="hr" stroke="#34d399" strokeWidth={2} dot={{ fill: '#34d399', r: 3 }} />
             </LineChart>
           </ResponsiveContainer>
-        </div>
-      )}
-
-      {sessions.length === 0 && allPlanEntries.length === 0 && (
-        <div className="text-center text-gray-500 py-8">
-          <p className="text-4xl mb-2">👋</p>
-          <p>Commence par aller dans <strong>Planning</strong> pour voir ton programme.</p>
         </div>
       )}
 
@@ -354,7 +386,7 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
 function StatCard({ value, label, color }: { value: string; label: string; color: string }) {
   return (
     <div className="card text-center">
-      <div className={`text-3xl font-bold ${color}`}>{value}</div>
+      <div className={`text-2xl font-bold ${color}`}>{value}</div>
       <div className="text-xs text-gray-400 mt-1">{label}</div>
     </div>
   )

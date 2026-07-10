@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import PageLayout from '../components/PageLayout'
+import EmptyState from '../components/EmptyState'
 import type { StrengthPerformance, WorkoutSession, ProgressSuggestion, Workout } from '../types'
 import { formatDate } from '../utils/calc'
 
@@ -45,6 +46,16 @@ export default function ExercicesPage({ strengthPerfs, workouts, suggestions }: 
 
   return (
     <PageLayout title="Exercices">
+      {exercises.length === 0 && (
+        <EmptyState
+          icon="💪"
+          title="Aucun exercice de muscu"
+          description="Ajoute des entraînements de renforcement dans ta configuration pour suivre tes charges."
+          actionLabel="Configurer les entraînements"
+          actionTo="/settings"
+        />
+      )}
+
       <div className="space-y-2">
         {exercises.map(ex => {
           const perfs = getPerfsForExercise(ex.id)

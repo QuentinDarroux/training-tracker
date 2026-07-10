@@ -1,6 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
+import EmptyState from '../components/EmptyState'
 import type { DatedPlanEntry, Workout, WorkoutSession, UserSettings } from '../types'
 import { today } from '../utils/calc'
 import { getPlanEntriesForDate, planEntryId } from '../services/trainingConfigService'
@@ -60,6 +61,16 @@ export default function TodayPage({ sessions, settings, workouts, onCreateSessio
         <p className="text-sm text-gray-400 mb-4">
           {new Date().toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
         </p>
+
+        {entries.length === 0 && (
+          <EmptyState
+            icon="🌤️"
+            title="Rien de prévu aujourd’hui"
+            description="Consulte le planning complet ou applique une nouvelle configuration si tu attendais une séance."
+            actionLabel="Voir le planning"
+            actionTo="/planning"
+          />
+        )}
 
         <div className="space-y-3">
           {entries.map(entry => {
