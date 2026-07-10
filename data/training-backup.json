@@ -1,6 +1,6 @@
 {
   "version": "1.0.0",
-  "exportedAt": "2026-07-10T12:35:50.939Z",
+  "exportedAt": "2026-07-10T12:48:53.793Z",
   "settings": {
     "theme": "dark",
     "weeklyPlan": {
@@ -396,11 +396,6 @@
     "plan": {
       "type": "dated",
       "entries": [
-        {
-          "date": "2026-07-10",
-          "label": "test",
-          "workoutId": "renfo_force_bas"
-        },
         {
           "date": "2026-07-20",
           "label": "J001 S01 renfo A — Base aérobie",
@@ -1733,116 +1728,10 @@
         }
       ]
     },
-    "trainingConfigUpdatedAt": "2026-07-10T12:31:08.965Z"
+    "trainingConfigUpdatedAt": "2026-07-10T12:48:33.974Z"
   },
-  "sessions": [
-    {
-      "id": "2026-07-10-test-renfo_force_bas-1783686680491",
-      "date": "2026-07-10",
-      "workoutId": "renfo_force_bas",
-      "workoutTitle": "Renfo force bas du corps",
-      "workoutType": "strength",
-      "planEntryId": "2026-07-10-test-renfo_force_bas",
-      "planLabel": "test",
-      "status": "done",
-      "createdAt": "2026-07-10T12:31:20.491Z",
-      "updatedAt": "2026-07-10T12:31:30.605Z",
-      "ressenti": 10,
-      "fatigue": 10,
-      "tflPain": 10
-    },
-    {
-      "id": "2026-07-20-J001 S01 renfo A — Base aérobie-renfo_force_bas-1783686590616",
-      "date": "2026-07-20",
-      "workoutId": "renfo_force_bas",
-      "workoutTitle": "Renfo force bas du corps",
-      "workoutType": "strength",
-      "planEntryId": "2026-07-20-J001 S01 renfo A — Base aérobie-renfo_force_bas",
-      "planLabel": "J001 S01 renfo A — Base aérobie",
-      "status": "planned",
-      "createdAt": "2026-07-10T12:29:50.616Z",
-      "updatedAt": "2026-07-10T12:29:50.616Z"
-    }
-  ],
-  "strengthPerformances": [
-    {
-      "id": "sp-2026-07-10-test-renfo_force_bas-1783686680491-hip_thrust-1783686690713",
-      "sessionId": "2026-07-10-test-renfo_force_bas-1783686680491",
-      "date": "2026-07-10",
-      "workoutId": "renfo_force_bas",
-      "exerciseId": "hip_thrust",
-      "exerciseName": "Hip Thrust",
-      "sets": [
-        {
-          "plannedSets": 3,
-          "actualSets": 3,
-          "plannedReps": 10,
-          "actualReps": 10,
-          "weight": 0
-        }
-      ],
-      "tflPain": 10,
-      "createdAt": "2026-07-10T12:31:30.713Z"
-    },
-    {
-      "id": "sp-2026-07-10-test-renfo_force_bas-1783686680491-mollets_debout-1783686690749",
-      "sessionId": "2026-07-10-test-renfo_force_bas-1783686680491",
-      "date": "2026-07-10",
-      "workoutId": "renfo_force_bas",
-      "exerciseId": "mollets_debout",
-      "exerciseName": "Mollets debout",
-      "sets": [
-        {
-          "plannedSets": 3,
-          "actualSets": 3,
-          "plannedReps": 15,
-          "actualReps": 15,
-          "weight": 0
-        }
-      ],
-      "tflPain": 10,
-      "createdAt": "2026-07-10T12:31:30.749Z"
-    },
-    {
-      "id": "sp-2026-07-10-test-renfo_force_bas-1783686680491-planche-1783686690786",
-      "sessionId": "2026-07-10-test-renfo_force_bas-1783686680491",
-      "date": "2026-07-10",
-      "workoutId": "renfo_force_bas",
-      "exerciseId": "planche",
-      "exerciseName": "Planche",
-      "sets": [
-        {
-          "plannedSets": 3,
-          "actualSets": 3,
-          "plannedReps": 40,
-          "actualReps": 40,
-          "weight": 0,
-          "duration": 40
-        }
-      ],
-      "tflPain": 10,
-      "createdAt": "2026-07-10T12:31:30.786Z"
-    },
-    {
-      "id": "sp-2026-07-10-test-renfo_force_bas-1783686680491-squat-1783686690675",
-      "sessionId": "2026-07-10-test-renfo_force_bas-1783686680491",
-      "date": "2026-07-10",
-      "workoutId": "renfo_force_bas",
-      "exerciseId": "squat",
-      "exerciseName": "Squat",
-      "sets": [
-        {
-          "plannedSets": 3,
-          "actualSets": 3,
-          "plannedReps": 8,
-          "actualReps": 8,
-          "weight": 0
-        }
-      ],
-      "tflPain": 10,
-      "createdAt": "2026-07-10T12:31:30.675Z"
-    }
-  ],
+  "sessions": [],
+  "strengthPerformances": [],
   "runningPerformances": [],
   "goals": {
     "goal10kSeconds": 3000,
