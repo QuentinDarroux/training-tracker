@@ -29,11 +29,70 @@ export interface WeeklyPlan {
   sunday: string
 }
 
+// Loosely-typed value/range used inside goals.intensite / goals.travail.
+// Shapes vary a lot (numeric HR range, pace strings, rpe, distance, textual rest...),
+// so we keep it permissive and only render what's present.
+export interface GoalTarget {
+  min?: number | string
+  max?: number | string
+  value?: number | string
+  unit?: string
+  sets?: string
+  mode?: string
+  [key: string]: unknown
+}
+
+export interface GoalIntensite {
+  type: string // e.g. 'rpe' | 'heart_rate' | 'pace' | 'rest' | 'duration' | ...
+  target?: GoalTarget
+  [key: string]: unknown
+}
+
+export interface GoalWorkBlock {
+  duration?: number
+  unit?: string
+  [key: string]: unknown
+}
+
+export interface GoalMainSet {
+  repetitions?: number
+  work?: GoalWorkBlock
+  recovery?: GoalWorkBlock
+  [key: string]: unknown
+}
+
+export interface GoalTravail {
+  type: string // e.g. 'strength' | 'distance' | 'interval' | 'rest' | 'duration' | 'mixed_distance' | ...
+  target?: GoalTarget
+  warmup?: GoalWorkBlock
+  mainSet?: GoalMainSet
+  cooldown?: GoalWorkBlock
+  [key: string]: unknown
+}
+
+export interface GoalNutrition {
+  fromDistanceKm?: number
+  suggestion?: string
+  [key: string]: unknown
+}
+
+export interface PlanEntryGoals {
+  objective?: string
+  rpe?: number
+  estimatedDurationMin?: number
+  intensite?: GoalIntensite
+  travail?: GoalTravail
+  nutrition?: GoalNutrition
+  rawWorkout?: string
+  [key: string]: unknown
+}
+
 export interface DatedPlanEntry {
   id?: string
   date: string // YYYY-MM-DD
   label: string
   workoutId: string
+  goals?: PlanEntryGoals
 }
 
 export interface DatedTrainingPlan {
@@ -43,6 +102,19 @@ export interface DatedTrainingPlan {
 
 export type TrainingPlan = DatedTrainingPlan
 
+// Program-level metadata (race target, zones...). Purely informational, kept
+// loose since agents may attach extra fields we don't explicitly render.
+export interface TrainingConfigMetadata {
+  name?: string
+  startDate?: string
+  raceDate?: string
+  targetTime?: string
+  targetPace?: string
+  schema?: string
+  zones?: Record<string, unknown>
+  [key: string]: unknown
+}
+
 export interface WorkoutSession {
   id: string
   date: string // ISO date string YYYY-MM-DD
@@ -51,6 +123,7 @@ export interface WorkoutSession {
   workoutType: WorkoutType
   planEntryId?: string
   planLabel?: string
+  planGoals?: PlanEntryGoals
   status: 'planned' | 'done' | 'skipped'
   ressenti?: number // 1-10
   fatigue?: number // 1-10
@@ -120,6 +193,7 @@ export interface UserSettings {
   weeklyPlan: WeeklyPlan
   plan?: TrainingPlan
   workouts?: Workout[]
+  metadata?: TrainingConfigMetadata
   trainingConfigUpdatedAt?: string
   lastLocalBackup?: string
   githubBackup?: GithubBackupConfig
@@ -140,6 +214,7 @@ export interface TrainingConfig {
   weeklyPlan?: WeeklyPlan
   plan?: TrainingPlan
   workouts: Workout[]
+  metadata?: TrainingConfigMetadata
 }
 
 export interface BackupData {

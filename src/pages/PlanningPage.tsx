@@ -6,6 +6,7 @@ import EmptyState from '../components/EmptyState'
 import SegmentedControl from '../components/SegmentedControl'
 import type { DatedPlanEntry, Workout, WorkoutSession, UserSettings, WorkoutType } from '../types'
 import { formatDate, getWeekStart, parseLocalDate, today, toLocalDateString } from '../utils/calc'
+import { formatGoalHeadline } from '../utils/goals'
 import {
   getAllPlanEntries,
   getPlanEntriesForWeek,
@@ -91,6 +92,7 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
       workoutType: workout.type,
       planEntryId: entryId,
       planLabel: entry.label,
+      planGoals: entry.goals,
       status: 'planned',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -376,6 +378,7 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
             const isToday = entry.date === todayStr
             const existingSession = getSessionForEntry(entry)
             const status = existingSession?.status
+            const goalHeadline = formatGoalHeadline(entry.goals)
 
             return (
               <div
@@ -392,11 +395,16 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
                       <div className="text-sm text-gray-500">{entry.label}</div>
                     </div>
                     {workout ? (
-                      <WorkoutBadge
-                        type={workout.type}
-                        title={workout.title}
-                        description={workout.description}
-                      />
+                      <div className="min-w-0">
+                        <WorkoutBadge
+                          type={workout.type}
+                          title={workout.title}
+                          description={workout.description}
+                        />
+                        {goalHeadline && (
+                          <div className="text-xs text-gray-500 mt-1 truncate">{goalHeadline}</div>
+                        )}
+                      </div>
                     ) : (
                       <div className="text-sm text-red-300">Workout introuvable: {entry.workoutId}</div>
                     )}

@@ -11,6 +11,7 @@ import type {
   Workout,
 } from '../types'
 import { calcPace, secondsToHMS, hmsToSeconds, formatPace, parseLocalDate } from '../utils/calc'
+import { formatGoalDetails } from '../utils/goals'
 
 interface Props {
   sessions: WorkoutSession[]
@@ -209,6 +210,12 @@ export default function SessionPage({
     ? formatPace(calcPace(parseFloat(distance), hmsToSeconds(runDuration)))
     : '--'
 
+  const goalLines = formatGoalDetails(session.planGoals)
+  const targetDistance = session.planGoals?.travail?.type === 'distance'
+    ? session.planGoals.travail.target?.value
+    : undefined
+  const targetDistancePlaceholder = targetDistance !== undefined ? String(targetDistance) : '12.5'
+
   return (
     <PageLayout title={workout.title}>
       <div className="space-y-4">
@@ -232,6 +239,16 @@ export default function SessionPage({
           </div>
         </div>
 
+        {/* Goals from the plan entry (objective, RPE, intensity/work targets) */}
+        {goalLines.length > 0 && (
+          <div className="card space-y-1">
+            <h3 className="font-medium text-gray-300 mb-1">🎯 Objectif du jour</h3>
+            {goalLines.map((line, i) => (
+              <p key={i} className="text-sm text-gray-300">{line}</p>
+            ))}
+          </div>
+        )}
+
         {/* Running performance */}
         {workout.type === 'running' && (
           <div className="card space-y-3">
@@ -241,7 +258,7 @@ export default function SessionPage({
                 <label className="label">Distance (km)</label>
                 <input type="number" step="0.01" value={distance}
                   onChange={e => setDistance(e.target.value)}
-                  className="input-field" placeholder="12.5" />
+                  className="input-field" placeholder={targetDistancePlaceholder} />
               </div>
               <div>
                 <label className="label">Durée (mm:ss ou hh:mm:ss)</label>
@@ -343,7 +360,7 @@ export default function SessionPage({
             <label className="label">Durée totale (min)</label>
             <input type="number" value={duration}
               onChange={e => setDuration(e.target.value)}
-              className="input-field" placeholder="60" />
+              className="input-field" placeholder={session.planGoals?.estimatedDurationMin ? String(session.planGoals.estimatedDurationMin) : '60'} />
           </div>
           <RatingInput label="Ressenti" value={ressenti} min={1} max={10}
             onChange={setRessenti} />

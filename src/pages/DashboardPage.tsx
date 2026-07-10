@@ -16,11 +16,8 @@ import {
   parseLocalDate,
   toLocalDateString,
 } from '../utils/calc'
-import {
-  getAllPlanEntries,
-  getPlanEntriesForCurrentWeek,
-  planEntryId,
-} from '../services/trainingConfigService'
+import { getAllPlanEntries, getPlanEntriesForCurrentWeek, planEntryId } from '../services/trainingConfigService'
+import { formatGoalHeadline } from '../utils/goals'
 
 interface Props {
   sessions: WorkoutSession[]
@@ -94,6 +91,11 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
   const nextWorkout = nextPlanEntry ? getWorkout(nextPlanEntry.workoutId) : undefined
 
   const lastSession = sessions.find(s => s.status === 'done')
+
+  const raceDate = settings?.metadata?.raceDate
+  const daysToRace = raceDate ? Math.ceil(
+    (parseLocalDate(raceDate).getTime() - parseLocalDate(todayStr).getTime()) / (1000 * 60 * 60 * 24)
+  ) : undefined
 
   const programDistributionData = useMemo(() => {
     const counts = { running: 0, strength: 0, rest: 0 }
@@ -186,6 +188,26 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
 
   return (
     <PageLayout title="Training Tracker">
+      {(settings?.metadata?.name || daysToRace !== undefined) && (
+        <div className="card mb-4 flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            {settings?.metadata?.name && (
+              <div className="text-sm font-medium text-gray-200 truncate">{settings.metadata.name}</div>
+            )}
+            {settings?.metadata?.targetTime && (
+              <div className="text-xs text-gray-500 mt-0.5">
+                Objectif : {settings.metadata.targetTime}{settings.metadata.targetPace ? ` · ${settings.metadata.targetPace}` : ''}
+              </div>
+            )}
+          </div>
+          {daysToRace !== undefined && (
+            <div className="text-center shrink-0">
+              <div className="text-xl font-bold text-indigo-400">{daysToRace > 0 ? `J-${daysToRace}` : '🏁'}</div>
+              <div className="text-[10px] text-gray-500 uppercase tracking-wide">Course</div>
+            </div>
+          )}
+        </div>
+      )}
       {nextPlanEntry && nextWorkout ? (
         <div className="card mb-4 border-indigo-700">
           <div className="flex items-start justify-between gap-4">
@@ -195,6 +217,9 @@ export default function DashboardPage({ sessions, runningPerfs, settings, workou
               <p className="mt-1 text-sm text-gray-400">
                 {formatDate(nextPlanEntry.date)} · {nextPlanEntry.label}
               </p>
+              {formatGoalHeadline(nextPlanEntry.goals) && (
+                <p className="mt-1 text-xs text-indigo-300">{formatGoalHeadline(nextPlanEntry.goals)}</p>
+              )}
               <p className="mt-3 line-clamp-2 text-sm text-gray-500">{nextWorkout.description}</p>
             </div>
             <div className="rounded-2xl bg-indigo-500/15 px-3 py-2 text-3xl">

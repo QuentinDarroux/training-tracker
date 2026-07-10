@@ -39,6 +39,7 @@ export function exportTrainingConfig(settings: UserSettings | null): TrainingCon
     exportedAt: new Date().toISOString(),
     ...(settings?.plan ? { plan: settings.plan } : { weeklyPlan: getActiveWeeklyPlan(settings) }),
     workouts: getActiveWorkouts(settings),
+    ...(settings?.metadata ? { metadata: settings.metadata } : {}),
   }
 }
 
@@ -63,6 +64,7 @@ export function applyTrainingConfig(settings: UserSettings, config: TrainingConf
     weeklyPlan: config.weeklyPlan ?? settings.weeklyPlan,
     plan: config.plan,
     workouts: config.workouts,
+    metadata: config.metadata,
     trainingConfigUpdatedAt: new Date().toISOString(),
   }
 }
@@ -142,6 +144,25 @@ Rules:
    - "date": string in YYYY-MM-DD format
    - "label": non-empty string displayed to the user
    - "workoutId": non-empty string matching one existing workouts[].id
+   - optional "goals": rich coaching detail for this specific day, especially
+     important for "running"/"rest" workouts whose exercises[] is empty since
+     all target detail lives here instead:
+     {
+       "objective": "short sentence explaining the point of the day",
+       "rpe": 1-10,
+       "estimatedDurationMin": number,
+       "intensite": { "type": "heart_rate"|"pace"|"rpe"|"rest"|"duration", "target": { "min", "max", "value", "unit" } },
+       "travail": {
+         "type": "distance"|"interval"|"strength"|"rest"|"duration"|"mixed_distance",
+         "target": { "value"|"min"|"max", "unit", "sets", "mode" },
+         "warmup": { "duration", "unit" },
+         "mainSet": { "repetitions", "work": { "duration", "unit" }, "recovery": { "duration", "unit" } },
+         "cooldown": { "duration", "unit" }
+       },
+       "nutrition": { "fromDistanceKm": number, "suggestion": "string" },
+       "rawWorkout": "free text fallback description"
+     }
+     All "goals" sub-fields are optional; only include what applies to the day.
 4. Multiple entries may have the same date.
 5. workouts[] must be a non-empty array.
 6. Workout fields:
@@ -161,8 +182,11 @@ Rules:
    - "trackDuration": boolean
    - "side": one of "both", "left", "right", "unilateral"
 9. Every plan entry workoutId must exist in workouts.
-10. Do not invent unsupported fields unless they are harmless metadata at top level.
-11. Preserve stable workout and exercise ids when updating an existing plan, because history is linked by ids.
+10. Optional top-level "metadata" object may describe the overall program
+    (e.g. "name", "startDate", "raceDate", "targetTime", "targetPace", "zones").
+    It is purely informational and shown to the user; do not invent unrelated fields.
+11. Do not invent unsupported fields unless they are harmless metadata (top-level "metadata" or entry-level "goals").
+12. Preserve stable workout and exercise ids when updating an existing plan, because history is linked by ids.
 
 Example:
 {
@@ -172,7 +196,18 @@ Example:
     "type": "dated",
     "entries": [
       { "date": "2026-07-20", "label": "J1 matin", "workoutId": "renfo_a" },
-      { "date": "2026-07-20", "label": "J1 après-midi", "workoutId": "footing_ef" },
+      {
+        "date": "2026-07-20",
+        "label": "J1 après-midi",
+        "workoutId": "footing_ef",
+        "goals": {
+          "objective": "Développer l'endurance fondamentale",
+          "rpe": 3,
+          "estimatedDurationMin": 41,
+          "intensite": { "type": "heart_rate", "target": { "min": 135, "max": 155, "unit": "bpm" } },
+          "travail": { "type": "distance", "target": { "value": 6, "unit": "km" } }
+        }
+      },
       { "date": "2026-07-21", "label": "J2 repos", "workoutId": "repos" }
     ]
   },
@@ -209,7 +244,14 @@ Example:
       "description": "Récupération.",
       "exercises": []
     }
-  ]
+  ],
+  "metadata": {
+    "name": "Prépa marathon sub 4h",
+    "startDate": "2026-07-20",
+    "raceDate": "2027-04-11",
+    "targetTime": "03:59:59",
+    "targetPace": "5:41/km"
+  }
 }`
 }
 
@@ -280,6 +322,21 @@ function isDatedPlanEntry(value: unknown): value is DatedPlanEntry {
     && value.label.trim().length > 0
     && typeof value.workoutId === 'string'
     && value.workoutId.trim().length > 0
+    && (value.goals === undefined || isPlanEntryGoals(value.goals))
+}
+
+// `goals` is intentionally validated loosely: it carries rich, evolving
+// coaching metadata (objective/rpe/intensite/travail/nutrition/...) that is
+// purely informational for the app, so we only check the few typed fields
+// and otherwise accept any object shape.
+function isPlanEntryGoals(value: unknown): boolean {
+  if (!isObject(value)) return false
+  if (value.rpe !== undefined && typeof value.rpe !== 'number') return false
+  if (value.estimatedDurationMin !== undefined && typeof value.estimatedDurationMin !== 'number') return false
+  if (value.objective !== undefined && typeof value.objective !== 'string') return false
+  if (value.intensite !== undefined && !isObject(value.intensite)) return false
+  if (value.travail !== undefined && !isObject(value.travail)) return false
+  return true
 }
 
 function isWeeklyPlan(value: unknown): value is WeeklyPlan {

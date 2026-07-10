@@ -5,6 +5,7 @@ import EmptyState from '../components/EmptyState'
 import type { DatedPlanEntry, Workout, WorkoutSession, UserSettings } from '../types'
 import { today } from '../utils/calc'
 import { getPlanEntriesForDate, planEntryId } from '../services/trainingConfigService'
+import { formatGoalDetails, formatGoalHeadline } from '../utils/goals'
 
 interface Props {
   sessions: WorkoutSession[]
@@ -46,6 +47,7 @@ export default function TodayPage({ sessions, settings, workouts, onCreateSessio
       workoutType: workout.type,
       planEntryId: entryId,
       planLabel: entry.label,
+      planGoals: entry.goals,
       status: 'planned',
       createdAt: new Date().toISOString(),
       updatedAt: new Date().toISOString(),
@@ -79,21 +81,34 @@ export default function TodayPage({ sessions, settings, workouts, onCreateSessio
             const existingSession = getSessionForEntry(entry)
 
             if (!workout || workout.type === 'rest') {
+              const goalLines = formatGoalDetails(entry.goals)
               return (
                 <div key={entryId} className="card text-center py-6">
                   <div className="text-4xl mb-3">😴</div>
                   <div className="text-lg font-medium text-gray-300">{entry.label}</div>
                   <p className="text-sm text-gray-500 mt-1">{workout?.description ?? 'Repos'}</p>
+                  {goalLines.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-700 space-y-1 text-left">
+                      {goalLines.map((line, i) => (
+                        <p key={i} className="text-xs text-gray-500">{line}</p>
+                      ))}
+                    </div>
+                  )}
                 </div>
               )
             }
+
+            const goalHeadline = formatGoalHeadline(entry.goals)
+            const goalLines = formatGoalDetails(entry.goals)
 
             return (
               <div key={entryId}>
                 <div className="card mb-2">
                   <div className="flex items-start justify-between mb-2">
                     <div>
-                      <div className="text-xs text-indigo-300 mb-1">{entry.label}</div>
+                      <div className="text-xs text-indigo-300 mb-1">
+                        {entry.label}{goalHeadline ? ` · ${goalHeadline}` : ''}
+                      </div>
                       <h2 className="text-xl font-bold">{workout.title}</h2>
                       <p className="text-sm text-gray-400 mt-1">{workout.description}</p>
                     </div>
@@ -114,6 +129,14 @@ export default function TodayPage({ sessions, settings, workouts, onCreateSessio
                       {existingSession.ressenti !== undefined && (
                         <span className="ml-2 text-sm text-gray-400">Ressenti: {existingSession.ressenti}/10</span>
                       )}
+                    </div>
+                  )}
+
+                  {goalLines.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-700 space-y-1">
+                      {goalLines.map((line, i) => (
+                        <p key={i} className="text-sm text-gray-300">{line}</p>
+                      ))}
                     </div>
                   )}
 
