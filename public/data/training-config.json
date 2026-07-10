@@ -1,78 +1,1716 @@
 {
   "version": "1.0.0",
-  "exportedAt": "2026-07-09T16:05:00.000Z",
+  "exportedAt": "2026-07-10T12:37:58.681Z",
   "plan": {
     "type": "dated",
     "entries": [
-      { "date": "2026-07-10", "label": "J1 matin", "workoutId": "renfo_a" },
-      { "date": "2026-07-11", "label": "J2 endurance", "workoutId": "footing_ef" },
-      { "date": "2026-07-12", "label": "J3 sortie longue", "workoutId": "sortie_longue" },
-      { "date": "2026-07-13", "label": "J4 repos", "workoutId": "repos" },
-      { "date": "2026-07-14", "label": "J5 qualité", "workoutId": "seance_qualite" },
-      { "date": "2026-07-15", "label": "J6 renfo", "workoutId": "renfo_b" },
-      { "date": "2026-07-16", "label": "J7 repos", "workoutId": "repos" },
-      { "date": "2026-07-17", "label": "J8 footing", "workoutId": "footing_ef" },
-      { "date": "2026-07-18", "label": "J9 matin", "workoutId": "renfo_a" },
-      { "date": "2026-07-18", "label": "J9 après-midi", "workoutId": "footing_ef" },
-      { "date": "2026-07-19", "label": "J10 sortie longue", "workoutId": "sortie_longue" },
-      { "date": "2026-07-20", "label": "J11 repos", "workoutId": "repos" },
-      { "date": "2026-07-21", "label": "J12 qualité", "workoutId": "seance_qualite" },
-      { "date": "2026-07-22", "label": "J13 renfo", "workoutId": "renfo_b" },
-      { "date": "2026-07-23", "label": "J14 footing", "workoutId": "footing_ef" }
+      {
+        "date": "2026-07-10",
+        "label": "test",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2026-07-20",
+        "label": "J001 S01 renfo A — Base aérobie",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2026-07-21",
+        "label": "J002 S01 footing EF 6 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-07-22",
+        "label": "J003 S01 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-07-23",
+        "label": "J004 S01 qualité — 8x1min rapide / 1min lente",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-07-24",
+        "label": "J005 S01 renfo B — Base aérobie",
+        "workoutId": "renfo_core_gainage"
+      },
+      {
+        "date": "2026-07-25",
+        "label": "J006 S01 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-07-26",
+        "label": "J007 S01 sortie longue 10 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-07-27",
+        "label": "J008 S02 renfo A — Base aérobie",
+        "workoutId": "renfo_unilateral_stabilite"
+      },
+      {
+        "date": "2026-07-28",
+        "label": "J009 S02 footing EF 7 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-07-29",
+        "label": "J010 S02 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-07-30",
+        "label": "J011 S02 qualité — 10x1min rapide / 1min lente",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-07-31",
+        "label": "J012 S02 renfo B — Base aérobie",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2026-08-01",
+        "label": "J013 S02 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-08-02",
+        "label": "J014 S02 sortie longue 12 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-08-03",
+        "label": "J015 S03 renfo A — Base aérobie",
+        "workoutId": "renfo_posterior_chain"
+      },
+      {
+        "date": "2026-08-04",
+        "label": "J016 S03 footing EF 7 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-08-05",
+        "label": "J017 S03 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-08-06",
+        "label": "J018 S03 qualité — 8x400m allure 5k / récup 200m",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-08-07",
+        "label": "J019 S03 renfo B — Base aérobie",
+        "workoutId": "renfo_plyo_light"
+      },
+      {
+        "date": "2026-08-08",
+        "label": "J020 S03 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-08-09",
+        "label": "J021 S03 sortie longue 14 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-08-10",
+        "label": "J022 S04 renfo A allégée — Base aérobie",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-08-11",
+        "label": "J023 S04 footing EF 6 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-08-12",
+        "label": "J024 S04 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-08-13",
+        "label": "J025 S04 qualité — Semaine allégée : 35min EF + 6 lignes droites",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-08-14",
+        "label": "J026 S04 renfo B allégée — Base aérobie",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-08-15",
+        "label": "J027 S04 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-08-16",
+        "label": "J028 S04 sortie longue 10 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-08-17",
+        "label": "J029 S05 renfo A — Base aérobie",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2026-08-18",
+        "label": "J030 S05 footing EF 7 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-08-19",
+        "label": "J031 S05 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-08-20",
+        "label": "J032 S05 qualité — 10x400m allure 5k / récup 200m",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-08-21",
+        "label": "J033 S05 renfo B — Base aérobie",
+        "workoutId": "renfo_core_gainage"
+      },
+      {
+        "date": "2026-08-22",
+        "label": "J034 S05 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-08-23",
+        "label": "J035 S05 sortie longue 15 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-08-24",
+        "label": "J036 S06 renfo A — Base aérobie",
+        "workoutId": "renfo_unilateral_stabilite"
+      },
+      {
+        "date": "2026-08-25",
+        "label": "J037 S06 footing EF 7 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-08-26",
+        "label": "J038 S06 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-08-27",
+        "label": "J039 S06 qualité — Côtes : 10x45s fort / retour trot",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-08-28",
+        "label": "J040 S06 renfo B — Base aérobie",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2026-08-29",
+        "label": "J041 S06 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-08-30",
+        "label": "J042 S06 sortie longue 16 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-08-31",
+        "label": "J043 S07 renfo A — Base aérobie",
+        "workoutId": "renfo_posterior_chain"
+      },
+      {
+        "date": "2026-09-01",
+        "label": "J044 S07 footing EF 8 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-09-02",
+        "label": "J045 S07 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-09-03",
+        "label": "J046 S07 qualité — 5x800m allure 10k / récup 2min",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-09-04",
+        "label": "J047 S07 renfo B — Base aérobie",
+        "workoutId": "renfo_plyo_light"
+      },
+      {
+        "date": "2026-09-05",
+        "label": "J048 S07 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-09-06",
+        "label": "J049 S07 sortie longue 18 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-09-07",
+        "label": "J050 S08 renfo A allégée — Base aérobie",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-09-08",
+        "label": "J051 S08 footing EF 8 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-09-09",
+        "label": "J052 S08 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-09-10",
+        "label": "J053 S08 qualité — Semaine allégée : 40min EF + éducatifs",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-09-11",
+        "label": "J054 S08 renfo B allégée — Base aérobie",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-09-12",
+        "label": "J055 S08 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-09-13",
+        "label": "J056 S08 sortie longue 13 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-09-14",
+        "label": "J057 S09 renfo A — Base aérobie",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2026-09-15",
+        "label": "J058 S09 footing EF 9 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-09-16",
+        "label": "J059 S09 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-09-17",
+        "label": "J060 S09 qualité — 6x800m allure 10k / récup 2min",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-09-18",
+        "label": "J061 S09 renfo B — Base aérobie",
+        "workoutId": "renfo_core_gainage"
+      },
+      {
+        "date": "2026-09-19",
+        "label": "J062 S09 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-09-20",
+        "label": "J063 S09 sortie longue 18 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-09-21",
+        "label": "J064 S10 renfo A — Base aérobie",
+        "workoutId": "renfo_unilateral_stabilite"
+      },
+      {
+        "date": "2026-09-22",
+        "label": "J065 S10 footing EF 9 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-09-23",
+        "label": "J066 S10 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-09-24",
+        "label": "J067 S10 qualité — 3x8min tempo / récup 3min",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-09-25",
+        "label": "J068 S10 renfo B — Base aérobie",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2026-09-26",
+        "label": "J069 S10 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-09-27",
+        "label": "J070 S10 sortie longue 20 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-09-28",
+        "label": "J071 S11 renfo A — Base aérobie",
+        "workoutId": "renfo_posterior_chain"
+      },
+      {
+        "date": "2026-09-29",
+        "label": "J072 S11 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-09-30",
+        "label": "J073 S11 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-10-01",
+        "label": "J074 S11 qualité — 5x1000m allure 10k / récup 2min30",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-10-02",
+        "label": "J075 S11 renfo B — Base aérobie",
+        "workoutId": "renfo_plyo_light"
+      },
+      {
+        "date": "2026-10-03",
+        "label": "J076 S11 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-10-04",
+        "label": "J077 S11 sortie longue 21 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-10-05",
+        "label": "J078 S12 renfo A allégée — Base aérobie",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-10-06",
+        "label": "J079 S12 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-10-07",
+        "label": "J080 S12 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-10-08",
+        "label": "J081 S12 qualité — Semaine allégée : 45min EF souple",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-10-09",
+        "label": "J082 S12 renfo B allégée — Base aérobie",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-10-10",
+        "label": "J083 S12 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-10-11",
+        "label": "J084 S12 sortie longue 15 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-10-12",
+        "label": "J085 S13 renfo A — Développement seuil",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2026-10-13",
+        "label": "J086 S13 footing EF 9 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-10-14",
+        "label": "J087 S13 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-10-15",
+        "label": "J088 S13 qualité — Test 10 km ou 3x10min tempo",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-10-16",
+        "label": "J089 S13 renfo B — Développement seuil",
+        "workoutId": "renfo_core_gainage"
+      },
+      {
+        "date": "2026-10-17",
+        "label": "J090 S13 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-10-18",
+        "label": "J091 S13 sortie longue 22 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-10-19",
+        "label": "J092 S14 renfo A — Développement seuil",
+        "workoutId": "renfo_unilateral_stabilite"
+      },
+      {
+        "date": "2026-10-20",
+        "label": "J093 S14 footing EF 9 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-10-21",
+        "label": "J094 S14 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-10-22",
+        "label": "J095 S14 qualité — 3x8min seuil / récup 3min",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-10-23",
+        "label": "J096 S14 renfo B — Développement seuil",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2026-10-24",
+        "label": "J097 S14 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-10-25",
+        "label": "J098 S14 sortie longue 20 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-10-26",
+        "label": "J099 S15 renfo A — Développement seuil",
+        "workoutId": "renfo_posterior_chain"
+      },
+      {
+        "date": "2026-10-27",
+        "label": "J100 S15 footing EF 9 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-10-28",
+        "label": "J101 S15 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-10-29",
+        "label": "J102 S15 qualité — 2x12min seuil / récup 4min",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-10-30",
+        "label": "J103 S15 renfo B — Développement seuil",
+        "workoutId": "renfo_plyo_light"
+      },
+      {
+        "date": "2026-10-31",
+        "label": "J104 S15 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-11-01",
+        "label": "J105 S15 sortie longue 24 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-11-02",
+        "label": "J106 S16 renfo A allégée — Développement seuil",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-11-03",
+        "label": "J107 S16 footing EF 9 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-11-04",
+        "label": "J108 S16 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-11-05",
+        "label": "J109 S16 qualité — Semaine allégée : 45min EF + 6 lignes droites",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-11-06",
+        "label": "J110 S16 renfo B allégée — Développement seuil",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-11-07",
+        "label": "J111 S16 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-11-08",
+        "label": "J112 S16 sortie longue 17 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-11-09",
+        "label": "J113 S17 renfo A — Développement seuil",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2026-11-10",
+        "label": "J114 S17 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-11-11",
+        "label": "J115 S17 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-11-12",
+        "label": "J116 S17 qualité — 6x1000m allure 10k / récup 2min30",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-11-13",
+        "label": "J117 S17 renfo B — Développement seuil",
+        "workoutId": "renfo_core_gainage"
+      },
+      {
+        "date": "2026-11-14",
+        "label": "J118 S17 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-11-15",
+        "label": "J119 S17 sortie longue 24 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-11-16",
+        "label": "J120 S18 renfo A — Développement seuil",
+        "workoutId": "renfo_unilateral_stabilite"
+      },
+      {
+        "date": "2026-11-17",
+        "label": "J121 S18 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-11-18",
+        "label": "J122 S18 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-11-19",
+        "label": "J123 S18 qualité — 3x10min seuil / récup 3min",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-11-20",
+        "label": "J124 S18 renfo B — Développement seuil",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2026-11-21",
+        "label": "J125 S18 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-11-22",
+        "label": "J126 S18 sortie longue 26 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-11-23",
+        "label": "J127 S19 renfo A — Développement seuil",
+        "workoutId": "renfo_posterior_chain"
+      },
+      {
+        "date": "2026-11-24",
+        "label": "J128 S19 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-11-25",
+        "label": "J129 S19 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-11-26",
+        "label": "J130 S19 qualité — 20min tempo continu",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-11-27",
+        "label": "J131 S19 renfo B — Développement seuil",
+        "workoutId": "renfo_plyo_light"
+      },
+      {
+        "date": "2026-11-28",
+        "label": "J132 S19 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-11-29",
+        "label": "J133 S19 sortie longue 22 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-11-30",
+        "label": "J134 S20 renfo A allégée — Développement seuil",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-12-01",
+        "label": "J135 S20 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-12-02",
+        "label": "J136 S20 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-12-03",
+        "label": "J137 S20 qualité — Semaine allégée : 50min EF souple",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-12-04",
+        "label": "J138 S20 renfo B allégée — Développement seuil",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-12-05",
+        "label": "J139 S20 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-12-06",
+        "label": "J140 S20 sortie longue 18 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-12-07",
+        "label": "J141 S21 renfo A — Développement seuil",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2026-12-08",
+        "label": "J142 S21 footing EF 11 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-12-09",
+        "label": "J143 S21 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-12-10",
+        "label": "J144 S21 qualité — 4x1500m allure 10k / récup 3min",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-12-11",
+        "label": "J145 S21 renfo B — Développement seuil",
+        "workoutId": "renfo_core_gainage"
+      },
+      {
+        "date": "2026-12-12",
+        "label": "J146 S21 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-12-13",
+        "label": "J147 S21 sortie longue 26 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-12-14",
+        "label": "J148 S22 renfo A — Développement seuil",
+        "workoutId": "renfo_unilateral_stabilite"
+      },
+      {
+        "date": "2026-12-15",
+        "label": "J149 S22 footing EF 11 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-12-16",
+        "label": "J150 S22 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-12-17",
+        "label": "J151 S22 qualité — 2x15min seuil / récup 4min",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-12-18",
+        "label": "J152 S22 renfo B — Développement seuil",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2026-12-19",
+        "label": "J153 S22 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-12-20",
+        "label": "J154 S22 sortie longue 28 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-12-21",
+        "label": "J155 S23 renfo A — Développement seuil",
+        "workoutId": "renfo_posterior_chain"
+      },
+      {
+        "date": "2026-12-22",
+        "label": "J156 S23 footing EF 11 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-12-23",
+        "label": "J157 S23 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-12-24",
+        "label": "J158 S23 qualité — 5x1200m allure 10k / récup 2min30",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2026-12-25",
+        "label": "J159 S23 renfo B — Développement seuil",
+        "workoutId": "renfo_plyo_light"
+      },
+      {
+        "date": "2026-12-26",
+        "label": "J160 S23 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-12-27",
+        "label": "J161 S23 sortie longue 22 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2026-12-28",
+        "label": "J162 S24 renfo A allégée — Développement seuil",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2026-12-29",
+        "label": "J163 S24 footing EF 11 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2026-12-30",
+        "label": "J164 S24 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2026-12-31",
+        "label": "J165 S24 qualité — Semaine allégée : 50min EF + 6 lignes droites",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-01-01",
+        "label": "J166 S24 renfo B allégée — Développement seuil",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2027-01-02",
+        "label": "J167 S24 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-01-03",
+        "label": "J168 S24 sortie longue 20 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-01-04",
+        "label": "J169 S25 renfo A — Spécifique marathon",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2027-01-05",
+        "label": "J170 S25 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-01-06",
+        "label": "J171 S25 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-01-07",
+        "label": "J172 S25 qualité — 2x5km allure marathon / récup 1km EF",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-01-08",
+        "label": "J173 S25 renfo B — Spécifique marathon",
+        "workoutId": "renfo_core_gainage"
+      },
+      {
+        "date": "2027-01-09",
+        "label": "J174 S25 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-01-10",
+        "label": "J175 S25 sortie longue 28 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-01-11",
+        "label": "J176 S26 renfo A — Spécifique marathon",
+        "workoutId": "renfo_unilateral_stabilite"
+      },
+      {
+        "date": "2027-01-12",
+        "label": "J177 S26 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-01-13",
+        "label": "J178 S26 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-01-14",
+        "label": "J179 S26 qualité — 3x4km allure marathon / récup 1km EF",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-01-15",
+        "label": "J180 S26 renfo B — Spécifique marathon",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2027-01-16",
+        "label": "J181 S26 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-01-17",
+        "label": "J182 S26 sortie longue 30 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-01-18",
+        "label": "J183 S27 renfo A — Spécifique marathon",
+        "workoutId": "renfo_posterior_chain"
+      },
+      {
+        "date": "2027-01-19",
+        "label": "J184 S27 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-01-20",
+        "label": "J185 S27 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-01-21",
+        "label": "J186 S27 qualité — 12km dont 8km allure marathon",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-01-22",
+        "label": "J187 S27 renfo B — Spécifique marathon",
+        "workoutId": "renfo_plyo_light"
+      },
+      {
+        "date": "2027-01-23",
+        "label": "J188 S27 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-01-24",
+        "label": "J189 S27 sortie longue 24 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-01-25",
+        "label": "J190 S28 renfo A allégée — Spécifique marathon",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2027-01-26",
+        "label": "J191 S28 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-01-27",
+        "label": "J192 S28 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-01-28",
+        "label": "J193 S28 qualité — Semaine allégée : 50min EF souple",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-01-29",
+        "label": "J194 S28 renfo B allégée — Spécifique marathon",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2027-01-30",
+        "label": "J195 S28 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-01-31",
+        "label": "J196 S28 sortie longue 22 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-02-01",
+        "label": "J197 S29 renfo A — Spécifique marathon",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2027-02-02",
+        "label": "J198 S29 footing EF 10 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-02-03",
+        "label": "J199 S29 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-02-04",
+        "label": "J200 S29 qualité — 2x6km allure marathon / récup 1km EF",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-02-05",
+        "label": "J201 S29 renfo B — Spécifique marathon",
+        "workoutId": "renfo_core_gainage"
+      },
+      {
+        "date": "2027-02-06",
+        "label": "J202 S29 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-02-07",
+        "label": "J203 S29 sortie longue 30 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-02-08",
+        "label": "J204 S30 renfo A — Spécifique marathon",
+        "workoutId": "renfo_unilateral_stabilite"
+      },
+      {
+        "date": "2027-02-09",
+        "label": "J205 S30 footing EF 11 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-02-10",
+        "label": "J206 S30 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-02-11",
+        "label": "J207 S30 qualité — 16km dont 10km allure marathon",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-02-12",
+        "label": "J208 S30 renfo B — Spécifique marathon",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2027-02-13",
+        "label": "J209 S30 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-02-14",
+        "label": "J210 S30 sortie longue 32 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-02-15",
+        "label": "J211 S31 renfo A — Spécifique marathon",
+        "workoutId": "renfo_posterior_chain"
+      },
+      {
+        "date": "2027-02-16",
+        "label": "J212 S31 footing EF 11 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-02-17",
+        "label": "J213 S31 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-02-18",
+        "label": "J214 S31 qualité — Semi test ou 3x5km allure marathon",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-02-19",
+        "label": "J215 S31 renfo B — Spécifique marathon",
+        "workoutId": "renfo_plyo_light"
+      },
+      {
+        "date": "2027-02-20",
+        "label": "J216 S31 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-02-21",
+        "label": "J217 S31 sortie longue 26 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-02-22",
+        "label": "J218 S32 renfo A allégée — Spécifique marathon",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2027-02-23",
+        "label": "J219 S32 footing EF 11 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-02-24",
+        "label": "J220 S32 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-02-25",
+        "label": "J221 S32 qualité — Semaine allégée : 50min EF + 6 lignes droites",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-02-26",
+        "label": "J222 S32 renfo B allégée — Spécifique marathon",
+        "workoutId": "renfo_hanches_tfl"
+      },
+      {
+        "date": "2027-02-27",
+        "label": "J223 S32 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-02-28",
+        "label": "J224 S32 sortie longue 24 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-03-01",
+        "label": "J225 S33 renfo A — Spécifique marathon",
+        "workoutId": "renfo_force_bas"
+      },
+      {
+        "date": "2027-03-02",
+        "label": "J226 S33 footing EF 11 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-03-03",
+        "label": "J227 S33 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-03-04",
+        "label": "J228 S33 qualité — 20km progressif dont 12km allure marathon",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-03-05",
+        "label": "J229 S33 renfo B — Spécifique marathon",
+        "workoutId": "renfo_core_gainage"
+      },
+      {
+        "date": "2027-03-06",
+        "label": "J230 S33 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-03-07",
+        "label": "J231 S33 sortie longue 32 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-03-08",
+        "label": "J232 S34 renfo A — Spécifique marathon",
+        "workoutId": "renfo_unilateral_stabilite"
+      },
+      {
+        "date": "2027-03-09",
+        "label": "J233 S34 footing EF 11 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-03-10",
+        "label": "J234 S34 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-03-11",
+        "label": "J235 S34 qualité — 3x5km allure marathon / récup 1km EF",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-03-12",
+        "label": "J236 S34 renfo B — Spécifique marathon",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2027-03-13",
+        "label": "J237 S34 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-03-14",
+        "label": "J238 S34 sortie longue 30 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-03-15",
+        "label": "J239 S35 renfo A — Spécifique marathon",
+        "workoutId": "renfo_posterior_chain"
+      },
+      {
+        "date": "2027-03-16",
+        "label": "J240 S35 footing EF 12 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-03-17",
+        "label": "J241 S35 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-03-18",
+        "label": "J242 S35 qualité — Dernier gros rappel : 2x6km allure marathon",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-03-19",
+        "label": "J243 S35 renfo B — Spécifique marathon",
+        "workoutId": "renfo_plyo_light"
+      },
+      {
+        "date": "2027-03-20",
+        "label": "J244 S35 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-03-21",
+        "label": "J245 S35 sortie longue 26 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-03-22",
+        "label": "J246 S36 renfo A — Affûtage",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2027-03-23",
+        "label": "J247 S36 footing EF 8 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-03-24",
+        "label": "J248 S36 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-03-25",
+        "label": "J249 S36 qualité — Affûtage : 2x4km allure marathon",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-03-26",
+        "label": "J250 S36 renfo B — Affûtage",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2027-03-27",
+        "label": "J251 S36 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-03-28",
+        "label": "J252 S36 sortie longue 20 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-03-29",
+        "label": "J253 S37 renfo A — Affûtage",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2027-03-30",
+        "label": "J254 S37 footing EF 6 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-03-31",
+        "label": "J255 S37 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-04-01",
+        "label": "J256 S37 qualité — Affûtage : 5km allure marathon + 5 lignes droites",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-04-02",
+        "label": "J257 S37 renfo B — Affûtage",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2027-04-03",
+        "label": "J258 S37 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-04-04",
+        "label": "J259 S37 sortie longue 14 km EF",
+        "workoutId": "sortie_longue"
+      },
+      {
+        "date": "2027-04-05",
+        "label": "J260 S38 mobilité légère",
+        "workoutId": "renfo_mobility"
+      },
+      {
+        "date": "2027-04-06",
+        "label": "J261 S38 footing EF 5 km",
+        "workoutId": "footing_ef"
+      },
+      {
+        "date": "2027-04-07",
+        "label": "J262 S38 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-04-08",
+        "label": "J263 S38 rappel : Semaine course : 30min EF + 5 accélérations",
+        "workoutId": "seance_qualite"
+      },
+      {
+        "date": "2027-04-09",
+        "label": "J264 S38 repos",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-04-10",
+        "label": "J265 S38 repos / marche légère",
+        "workoutId": "repos"
+      },
+      {
+        "date": "2027-04-11",
+        "label": "J266 S38 MARATHON 42.195 km — objectif sub 4h",
+        "workoutId": "marathon_course"
+      }
     ]
   },
   "workouts": [
     {
-      "id": "renfo_a",
-      "title": "Renforcement A",
+      "id": "renfo_force_bas",
+      "title": "Renfo force bas du corps",
       "type": "strength",
-      "description": "Jambes + core + prévention TFL",
+      "description": "Force utile pour marathon : quadriceps, fessiers, mollets. Charge progressive, jamais à l'échec.",
       "exercises": [
-        { "id": "squat", "name": "Squats", "sets": 3, "reps": 12, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "both" },
-        { "id": "fentes", "name": "Fentes", "sets": 3, "reps": 10, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "unilateral" },
-        { "id": "hip_thrust", "name": "Hip Thrust", "sets": 3, "reps": 12, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "both" },
-        { "id": "planche", "name": "Planche", "sets": 3, "reps": 30, "unit": "seconds", "trackWeight": false, "trackDuration": true, "side": "both" }
+        {
+          "id": "squat",
+          "name": "Squat",
+          "sets": 3,
+          "reps": 8,
+          "unit": "reps",
+          "trackWeight": true,
+          "trackDuration": false,
+          "side": "both"
+        },
+        {
+          "id": "hip_thrust",
+          "name": "Hip Thrust",
+          "sets": 3,
+          "reps": 10,
+          "unit": "reps",
+          "trackWeight": true,
+          "trackDuration": false,
+          "side": "both"
+        },
+        {
+          "id": "mollets_debout",
+          "name": "Mollets debout",
+          "sets": 3,
+          "reps": 15,
+          "unit": "reps",
+          "trackWeight": true,
+          "trackDuration": false,
+          "side": "both"
+        },
+        {
+          "id": "planche",
+          "name": "Planche",
+          "sets": 3,
+          "reps": 40,
+          "unit": "seconds",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "both"
+        }
       ]
     },
     {
-      "id": "renfo_b",
-      "title": "Renforcement B",
+      "id": "renfo_unilateral_stabilite",
+      "title": "Renfo unilatéral + stabilité",
       "type": "strength",
-      "description": "Jambes + fessiers + stabilité hanche",
+      "description": "Travail jambe par jambe pour limiter les déséquilibres et stabiliser hanche/genou/cheville.",
       "exercises": [
-        { "id": "step_up", "name": "Step Up", "sets": 3, "reps": 10, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "unilateral" },
-        { "id": "sdj_tendues", "name": "Soulevé de terre jambes tendues", "sets": 3, "reps": 12, "unit": "reps", "trackWeight": true, "trackDuration": false, "side": "both" },
-        { "id": "pont_1jambe", "name": "Pont fessier une jambe", "sets": 3, "reps": 15, "unit": "reps", "trackWeight": false, "trackDuration": false, "side": "unilateral" },
-        { "id": "clamshell", "name": "Clamshell", "sets": 3, "reps": 15, "unit": "reps", "trackWeight": false, "trackDuration": false, "side": "unilateral" },
-        { "id": "bird_dog", "name": "Bird Dog", "sets": 3, "reps": 15, "unit": "reps", "trackWeight": false, "trackDuration": false, "side": "both" }
+        {
+          "id": "fentes_arriere",
+          "name": "Fentes arrière",
+          "sets": 3,
+          "reps": 10,
+          "unit": "reps",
+          "trackWeight": true,
+          "trackDuration": false,
+          "side": "unilateral"
+        },
+        {
+          "id": "step_up",
+          "name": "Step Up",
+          "sets": 3,
+          "reps": 10,
+          "unit": "reps",
+          "trackWeight": true,
+          "trackDuration": false,
+          "side": "unilateral"
+        },
+        {
+          "id": "single_leg_rdl",
+          "name": "Soulevé de terre une jambe",
+          "sets": 3,
+          "reps": 10,
+          "unit": "reps",
+          "trackWeight": true,
+          "trackDuration": false,
+          "side": "unilateral"
+        },
+        {
+          "id": "side_plank",
+          "name": "Planche latérale",
+          "sets": 3,
+          "reps": 30,
+          "unit": "seconds",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "unilateral"
+        }
+      ]
+    },
+    {
+      "id": "renfo_posterior_chain",
+      "title": "Renfo chaîne postérieure",
+      "type": "strength",
+      "description": "Ischios, fessiers, dos : utile pour garder une foulée propre quand la fatigue monte.",
+      "exercises": [
+        {
+          "id": "sdj_tendues",
+          "name": "Soulevé de terre jambes tendues",
+          "sets": 3,
+          "reps": 10,
+          "unit": "reps",
+          "trackWeight": true,
+          "trackDuration": false,
+          "side": "both"
+        },
+        {
+          "id": "pont_1jambe",
+          "name": "Pont fessier une jambe",
+          "sets": 3,
+          "reps": 12,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "unilateral"
+        },
+        {
+          "id": "leg_curl_serviette",
+          "name": "Leg curl serviette / Swiss ball",
+          "sets": 3,
+          "reps": 10,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "both"
+        },
+        {
+          "id": "dead_bug",
+          "name": "Dead Bug",
+          "sets": 3,
+          "reps": 12,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "both"
+        }
+      ]
+    },
+    {
+      "id": "renfo_hanches_tfl",
+      "title": "Renfo hanches + prévention TFL",
+      "type": "strength",
+      "description": "Moyen fessier, abducteurs et contrôle du genou. À garder propre, lent, sans douleur.",
+      "exercises": [
+        {
+          "id": "clamshell",
+          "name": "Clamshell",
+          "sets": 3,
+          "reps": 15,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "unilateral"
+        },
+        {
+          "id": "monster_walk",
+          "name": "Monster Walk élastique",
+          "sets": 3,
+          "reps": 12,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "both"
+        },
+        {
+          "id": "abduction_laterale",
+          "name": "Abduction hanche latérale",
+          "sets": 3,
+          "reps": 15,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "unilateral"
+        },
+        {
+          "id": "bird_dog",
+          "name": "Bird Dog",
+          "sets": 3,
+          "reps": 12,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "both"
+        }
+      ]
+    },
+    {
+      "id": "renfo_core_gainage",
+      "title": "Core + gainage coureur",
+      "type": "strength",
+      "description": "Tronc solide pour limiter l'affaissement en fin de sortie longue.",
+      "exercises": [
+        {
+          "id": "planche",
+          "name": "Planche",
+          "sets": 3,
+          "reps": 45,
+          "unit": "seconds",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "both"
+        },
+        {
+          "id": "side_plank",
+          "name": "Planche latérale",
+          "sets": 3,
+          "reps": 35,
+          "unit": "seconds",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "unilateral"
+        },
+        {
+          "id": "pallof_press",
+          "name": "Pallof Press",
+          "sets": 3,
+          "reps": 12,
+          "unit": "reps",
+          "trackWeight": true,
+          "trackDuration": false,
+          "side": "unilateral"
+        },
+        {
+          "id": "mountain_climber_lent",
+          "name": "Mountain climber lent",
+          "sets": 3,
+          "reps": 30,
+          "unit": "seconds",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "both"
+        }
+      ]
+    },
+    {
+      "id": "renfo_plyo_light",
+      "title": "Pliométrie légère + pieds/chevilles",
+      "type": "strength",
+      "description": "Réactivité légère, économie de course. À éviter si douleur ou fatigue marquée.",
+      "exercises": [
+        {
+          "id": "skipping",
+          "name": "Skipping léger",
+          "sets": 3,
+          "reps": 30,
+          "unit": "seconds",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "both"
+        },
+        {
+          "id": "petits_bonds",
+          "name": "Petits bonds sur place",
+          "sets": 3,
+          "reps": 20,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "both"
+        },
+        {
+          "id": "montee_mollets_1jambe",
+          "name": "Montées mollets une jambe",
+          "sets": 3,
+          "reps": 12,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "unilateral"
+        },
+        {
+          "id": "gainage_dynamique",
+          "name": "Gainage dynamique",
+          "sets": 3,
+          "reps": 30,
+          "unit": "seconds",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "both"
+        }
+      ]
+    },
+    {
+      "id": "renfo_mobility",
+      "title": "Mobilité + activation légère",
+      "type": "strength",
+      "description": "Séance légère : mobilité hanches/chevilles, activation fessiers, récupération active.",
+      "exercises": [
+        {
+          "id": "mobilite_hanche",
+          "name": "Mobilité hanche",
+          "sets": 2,
+          "reps": 45,
+          "unit": "seconds",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "unilateral"
+        },
+        {
+          "id": "mobilite_cheville",
+          "name": "Mobilité cheville",
+          "sets": 2,
+          "reps": 45,
+          "unit": "seconds",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "unilateral"
+        },
+        {
+          "id": "glute_bridge",
+          "name": "Glute Bridge",
+          "sets": 2,
+          "reps": 15,
+          "unit": "reps",
+          "trackWeight": false,
+          "trackDuration": false,
+          "side": "both"
+        },
+        {
+          "id": "respiration_relax",
+          "name": "Respiration / relâchement",
+          "sets": 1,
+          "reps": 5,
+          "unit": "minutes",
+          "trackWeight": false,
+          "trackDuration": true,
+          "side": "both"
+        }
       ]
     },
     {
       "id": "footing_ef",
       "title": "Footing EF",
       "type": "running",
-      "description": "Endurance fondamentale — allure facile, FC contrôlée, discussion possible.",
+      "description": "Endurance fondamentale. Rester facile : discussion possible, idéalement FC 135-155 bpm.",
       "exercises": []
     },
     {
       "id": "seance_qualite",
       "title": "Séance qualité",
       "type": "running",
-      "description": "Fractionné/tempo contrôlé pour travailler l'allure.",
+      "description": "Fractionné, seuil, tempo ou allure marathon selon le libellé du jour. Échauffement + retour au calme inclus.",
       "exercises": []
     },
     {
       "id": "sortie_longue",
       "title": "Sortie longue",
       "type": "running",
-      "description": "Construire l'endurance progressivement en zone facile.",
+      "description": "Endurance longue progressive en zone facile. Tester hydratation et nutrition sur les sorties de 24 km et plus.",
+      "exercises": []
+    },
+    {
+      "id": "marathon_course",
+      "title": "Marathon",
+      "type": "running",
+      "description": "Course objectif : 42,195 km. Départ prudent, cible sub 4h si les sensations et les tests sont alignés.",
       "exercises": []
     },
     {
       "id": "repos",
       "title": "Repos",
       "type": "rest",
-      "description": "Journée de récupération.",
+      "description": "Récupération. Sommeil, hydratation, marche légère si envie.",
       "exercises": []
     }
   ]
