@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type FormEvent } from 'react'
 import { useNavigate } from 'react-router-dom'
 import PageLayout from '../components/PageLayout'
 import WorkoutBadge from '../components/WorkoutBadge'
@@ -17,15 +17,25 @@ interface Props {
   settings: UserSettings | null
   workouts: Workout[]
   onCreateSession: (session: WorkoutSession) => Promise<void>
+  onUpdateSettings: (settings: UserSettings) => Promise<void>
 }
 
 type PlanningTab = 'week' | 'all'
+type FrequencyMode = 'unique' | 'recurring'
 
-export default function PlanningPage({ sessions, settings, workouts, onCreateSession }: Props) {
+export default function PlanningPage({ sessions, settings, workouts, onCreateSession, onUpdateSettings }: Props) {
   const navigate = useNavigate()
   const [creatingEntryId, setCreatingEntryId] = useState<string | null>(null)
   const [tab, setTab] = useState<PlanningTab>('week')
   const [weekStartDate, setWeekStartDate] = useState(getWeekStart(today()))
+  const [showAddEntry, setShowAddEntry] = useState(false)
+  const [addMessage, setAddMessage] = useState<{ text: string; type: 'success' | 'error' } | null>(null)
+  const [newWorkoutId, setNewWorkoutId] = useState('')
+  const [newDate, setNewDate] = useState(today())
+  const [newLabel, setNewLabel] = useState('Séance')
+  const [frequencyMode, setFrequencyMode] = useState<FrequencyMode>('unique')
+  const [everyDays, setEveryDays] = useState(7)
+  const [occurrences, setOccurrences] = useState(4)
 
   const entries = tab === 'week'
     ? getPlanEntriesForWeek(settings, weekStartDate)
@@ -41,6 +51,11 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
     const start = parseLocalDate(weekStartDate)
     start.setDate(start.getDate() + (delta * 7))
     setWeekStartDate(toLocalDateString(start))
+  }
+
+  const showAddMsg = (text: string, type: 'success' | 'error' = 'success') => {
+    setAddMessage({ text, type })
+    setTimeout(() => setAddMessage(null), 4000)
   }
 
   const getSessionForEntry = (entry: DatedPlanEntry): WorkoutSession | undefined => {
@@ -80,8 +95,170 @@ export default function PlanningPage({ sessions, settings, workouts, onCreateSes
     navigate(`/seance/${newSession.id}`)
   }
 
+  const handleAddPlanEntries = async (event: FormEvent) => {
+    event.preventDefault()
+    if (!settings) {
+      showAddMsg('Réglages indisponibles.', 'error')
+      return
+    }
+
+    const workoutId = newWorkoutId || workouts[0]?.id
+    if (!workoutId) {
+      showAddMsg('Aucun entraînement disponible à planifier.', 'error')
+      return
+    }
+    if (!newDate) {
+      showAddMsg('Choisis une date de départ.', 'error')
+      return
+    }
+    const label = newLabel.trim()
+    if (!label) {
+      showAddMsg('Ajoute un label, par exemple Matin ou Après-midi.', 'error')
+      return
+    }
+
+    const totalOccurrences = frequencyMode === 'unique' ? 1 : Math.max(1, Math.floor(occurrences))
+    const intervalDays = Math.max(1, Math.floor(everyDays))
+    const startDate = parseLocalDate(newDate)
+    const createdAt = Date.now()
+    const generatedEntries: DatedPlanEntry[] = Array.from({ length: totalOccurrences }, (_, index) => {
+      const date = new Date(startDate)
+      date.setDate(startDate.getDate() + (index * intervalDays))
+      return {
+        id: `manual-${createdAt}-${index + 1}`,
+        date: toLocalDateString(date),
+        label: totalOccurrences === 1 ? label : `${label} #${index + 1}`,
+        workoutId,
+      }
+    })
+
+    const existingEntries = settings.plan?.type === 'dated' ? settings.plan.entries : []
+    const updated: UserSettings = {
+      ...settings,
+      plan: {
+        type: 'dated',
+        entries: [...existingEntries, ...generatedEntries]
+          .sort((a, b) => a.date.localeCompare(b.date) || planEntryId(a).localeCompare(planEntryId(b))),
+      },
+      workouts,
+      trainingConfigUpdatedAt: new Date().toISOString(),
+    }
+
+    await onUpdateSettings(updated)
+    setTab('all')
+    setShowAddEntry(false)
+    showAddMsg(`${generatedEntries.length} entraînement${generatedEntries.length > 1 ? 's' : ''} ajouté${generatedEntries.length > 1 ? 's' : ''} au planning.`)
+  }
+
   return (
     <PageLayout title="Planning">
+      <div className="card mb-4 space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <div>
+            <h2 className="font-semibold text-gray-200">Ajouter un entraînement</h2>
+            <p className="text-xs text-gray-500 mt-1">
+              Planifie une séance unique ou récurrente à partir du catalogue.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setShowAddEntry(!showAddEntry)}
+            className="btn-secondary px-3 py-1 text-sm"
+          >
+            {showAddEntry ? 'Fermer' : '+ Ajouter'}
+          </button>
+        </div>
+
+        {addMessage && (
+          <div className={`rounded-xl p-3 text-sm ${
+            addMessage.type === 'success'
+              ? 'bg-green-900/40 border border-green-700 text-green-300'
+              : 'bg-red-900/40 border border-red-700 text-red-300'
+          }`}>
+            {addMessage.text}
+          </div>
+        )}
+
+        {showAddEntry && (
+          <form onSubmit={handleAddPlanEntries} className="space-y-3">
+            <div>
+              <label className="label">Entraînement</label>
+              <select
+                value={newWorkoutId || workouts[0]?.id || ''}
+                onChange={event => setNewWorkoutId(event.target.value)}
+                className="input-field"
+              >
+                {workouts.map(workout => (
+                  <option key={workout.id} value={workout.id}>
+                    {workout.title} · {workout.type}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              <div>
+                <label className="label">Date de départ</label>
+                <input
+                  type="date"
+                  value={newDate}
+                  onChange={event => setNewDate(event.target.value)}
+                  className="input-field"
+                />
+              </div>
+              <div>
+                <label className="label">Label</label>
+                <input
+                  value={newLabel}
+                  onChange={event => setNewLabel(event.target.value)}
+                  className="input-field"
+                  placeholder="Matin"
+                />
+              </div>
+            </div>
+
+            <SegmentedControl
+              value={frequencyMode}
+              onChange={setFrequencyMode}
+              options={[
+                { value: 'unique', label: 'Unique' },
+                { value: 'recurring', label: 'Chaque X jours' },
+              ]}
+            />
+
+            {frequencyMode === 'recurring' && (
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <label className="label">Tous les X jours</label>
+                  <input
+                    type="number"
+                    min={1}
+                    value={everyDays}
+                    onChange={event => setEveryDays(Number(event.target.value))}
+                    className="input-field"
+                  />
+                </div>
+                <div>
+                  <label className="label">Occurrences</label>
+                  <input
+                    type="number"
+                    min={1}
+                    max={52}
+                    value={occurrences}
+                    onChange={event => setOccurrences(Number(event.target.value))}
+                    className="input-field"
+                  />
+                </div>
+              </div>
+            )}
+
+            <button type="submit" className="btn-primary w-full">
+              Ajouter au planning
+            </button>
+          </form>
+        )}
+      </div>
+
       <SegmentedControl
         value={tab}
         onChange={setTab}

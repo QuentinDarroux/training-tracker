@@ -75,6 +75,7 @@ export default function App() {
             settings={settings}
             workouts={workoutCatalog}
             onCreateSession={saveSession}
+            onUpdateSettings={updateSettings}
           />
         } />
         <Route path="/aujourd-hui" element={
